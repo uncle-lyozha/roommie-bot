@@ -1,18 +1,19 @@
 import * as schedule from "node-schedule";
+import { calendar, event } from "../interfaces/interfaces";
 
 const rule = new schedule.RecurrenceRule();
-rule.dayOfWeek = [0, new schedule.Range(4)];
-rule.hour = 23;
-rule.minute = 10;
+rule.dayOfWeek = [0, new schedule.Range(1, 3)];
+rule.hour = 12;
+rule.minute = 0;
 rule.tz = "CET";
 
-const job = async () => {
-    const calendar = (await getCalendarData()) as calendar;
-    findTasks(calendar);
+export const cleaningScheduler = (
+    getCalendarData: () => Promise<calendar | null>,
+    findTasks: (calendar: calendar | null) => void
+): schedule.Job => {
+    const job = schedule.scheduleJob(rule, async () => {
+        const calendar = await getCalendarData();
+        findTasks(calendar);
+    });
+    return job;
 };
-
-job();
-// const job = schedule.scheduleJob(rule, async () => {
-//     const calendar = (await getCalendarData()) as calendar;
-//     findTasks(calendar);
-// });

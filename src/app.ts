@@ -1,11 +1,12 @@
+import "dotenv/config";
 import { Context, Markup, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
-import "dotenv/config";
-// import { Range, RecurrenceRule, scheduleJob } from "node-schedule";
-import * as schedule from "node-schedule";
+import { cleaningScheduler } from "./schedulers/cleaning.scheduler";
+import { calendar, event } from "./interfaces/interfaces";
 
 const LYOZHA = 268482275;
 const TEST_CHAT = -4065145869;
+const OUR_CHAT = -4046451983;
 
 const bot: Telegraf<Context<Update>> = new Telegraf(
     process.env.BOT_TOKEN as string
@@ -20,7 +21,7 @@ bot.start(ctx => {
 bot.help(ctx => {
     ctx.reply("Send /start to receive a greeting");
     ctx.reply("Send /keyboard to receive a message with a keyboard");
-    ctx.reply("Send /quit to stop the bot");
+    // ctx.reply("Send /quit to stop the bot");
     ctx.reply("Send /date to see where are you in time");
 });
 bot.command("date", ctx => {
@@ -50,8 +51,14 @@ bot.action("second", async ctx => {
     ctx.editMessageText("Kwak!");
 });
 
-async function getCalendarData() {
+async function getCalendarData(): Promise<calendar | null> {
     try {
+        if (!process.env.CALEND_ID || !process.env.CALEND_TOKEN) {
+            console.error(
+                "Missing required environmental variables for Calendar"
+            );
+            return null;
+        }
         const calendarId =
             (process.env.CALEND_ID as string) + "@group.calendar.google.com";
         const myKey = process.env.CALEND_TOKEN as string;
@@ -62,31 +69,18 @@ async function getCalendarData() {
                 myKey
         );
         let apiResponse = await apiCall.json();
-        return apiResponse;
+        return apiResponse as calendar;
     } catch (error) {
-        console.log(error);
+        console.error("Error fetching calendar data", error);
+        return null;
     }
 }
 
-type event = {
-    start: {
-        date: string;
-    };
-    summary: string;
-};
-
-interface calendar {
-    items: [
-        {
-            start: {
-                date: string;
-            };
-            summary: string;
-        }
-    ];
-}
-
-const findTasks = (calendar: calendar) => {
+const findTasks = (calendar: calendar | null): void => {
+    if (!calendar) {
+        console.error("Calendar data is missing.");
+        return;
+    }
     let targetEvents: event[] = [];
     let chatMessage: string = "THIS WEEK ON DUTY:\n";
     const today = new Date();
@@ -95,36 +89,33 @@ const findTasks = (calendar: calendar) => {
     console.log(events[0].start.date);
     events.forEach(event => {
         if (toDate === event.start.date) {
-            // if (event.summary === "Living room P") {
-            console.log("zaebiz");
             targetEvents.push(event);
         }
     });
     targetEvents.forEach(item => {
         chatMessage += item.summary + "\n";
     });
-    bot.telegram.sendMessage(TEST_CHAT, chatMessage);
-    sendMessage();
+    bot.telegram.sendMessage(OUR_CHAT, chatMessage);
 };
 
-const sendMessage = () => {};
+const job = cleaningScheduler(getCalendarData, findTasks);
 
-const rule = new schedule.RecurrenceRule();
-rule.dayOfWeek = [0, new schedule.Range(4)];
-rule.hour = 23;
-rule.minute = 10;
-rule.tz = "CET";
+// const rule = new schedule.RecurrenceRule();
+// rule.dayOfWeek = [0, new schedule.Range(4)];
+// rule.hour = 23;
+// rule.minute = 10;
+// rule.tz = "CET";
 
-const job = async () => {
-    const calendar = (await getCalendarData()) as calendar;
-    findTasks(calendar);
-};
-
-job();
-// const job = schedule.scheduleJob(rule, async () => {
+// const job = async () => {
 //     const calendar = (await getCalendarData()) as calendar;
 //     findTasks(calendar);
-// });
+// };
+
+// job();
+// // const job = schedule.scheduleJob(rule, async () => {
+// //     const calendar = (await getCalendarData()) as calendar;
+// //     findTasks(calendar);
+// // });
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
