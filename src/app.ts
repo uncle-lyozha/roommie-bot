@@ -2,13 +2,10 @@ import "dotenv/config";
 import { Context, Markup, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import { cleaningScheduler } from "./schedulers/cleaning.scheduler";
-import { calendar, event } from "./interfaces/interfaces";
+import { getCalendarData, findTasks } from "./utils/utils";
+import * as cron from "node-cron";
 
-const LYOZHA = 268482275;
-const TEST_CHAT = -4065145869;
-const OUR_CHAT = -4046451983;
-
-const bot: Telegraf<Context<Update>> = new Telegraf(
+export const bot: Telegraf<Context<Update>> = new Telegraf(
     process.env.BOT_TOKEN as string
 );
 
@@ -29,93 +26,19 @@ bot.command("date", ctx => {
     let toDate = today.toISOString().split("T")[0];
     ctx.reply("Today is " + toDate);
 });
-bot.command("quit", ctx => {
-    // Explicit usage
-    ctx.telegram.leaveChat(ctx.message.chat.id);
-    // Context shortcut
-    ctx.leaveChat();
+
+// const job = cleaningScheduler(getCalendarData, findTasks);
+
+cron.schedule("0 0 12 * * 1", async () => {
+    console.log("For whom the Moday bell tolls.");
+    const calendar = await getCalendarData();
+    findTasks(calendar);
 });
-bot.command("keyboard", ctx => {
-    ctx.reply(
-        "Keyboard",
-        Markup.inlineKeyboard([
-            Markup.button.callback("First option", "first"),
-            Markup.button.callback("Second option", "second"),
-        ])
-    );
+cron.schedule("0 50 20 * * 1", async () => {
+    console.log("For whom the Moday bell tolls.");
+    const calendar = await getCalendarData();
+    findTasks(calendar);
 });
-bot.action("first", async ctx => {
-    ctx.editMessageText("Pook!");
-});
-bot.action("second", async ctx => {
-    ctx.editMessageText("Kwak!");
-});
-
-async function getCalendarData(): Promise<calendar | null> {
-    try {
-        if (!process.env.CALEND_ID || !process.env.CALEND_TOKEN) {
-            console.error(
-                "Missing required environmental variables for Calendar"
-            );
-            return null;
-        }
-        const calendarId =
-            (process.env.CALEND_ID as string) + "@group.calendar.google.com";
-        const myKey = process.env.CALEND_TOKEN as string;
-        let apiCall = await fetch(
-            "https://www.googleapis.com/calendar/v3/calendars/" +
-                calendarId +
-                "/events?key=" +
-                myKey
-        );
-        let apiResponse = await apiCall.json();
-        return apiResponse as calendar;
-    } catch (error) {
-        console.error("Error fetching calendar data", error);
-        return null;
-    }
-}
-
-const findTasks = (calendar: calendar | null): void => {
-    if (!calendar) {
-        console.error("Calendar data is missing.");
-        return;
-    }
-    let targetEvents: event[] = [];
-    let chatMessage: string = "THIS WEEK ON DUTY:\n";
-    const today = new Date();
-    const toDate = today.toISOString().split("T")[0];
-    const events = calendar.items;
-    console.log(events[0].start.date);
-    events.forEach(event => {
-        if (toDate === event.start.date) {
-            targetEvents.push(event);
-        }
-    });
-    targetEvents.forEach(item => {
-        chatMessage += item.summary + "\n";
-    });
-    bot.telegram.sendMessage(OUR_CHAT, chatMessage);
-};
-
-const job = cleaningScheduler(getCalendarData, findTasks);
-
-// const rule = new schedule.RecurrenceRule();
-// rule.dayOfWeek = [0, new schedule.Range(4)];
-// rule.hour = 23;
-// rule.minute = 10;
-// rule.tz = "CET";
-
-// const job = async () => {
-//     const calendar = (await getCalendarData()) as calendar;
-//     findTasks(calendar);
-// };
-
-// job();
-// // const job = schedule.scheduleJob(rule, async () => {
-// //     const calendar = (await getCalendarData()) as calendar;
-// //     findTasks(calendar);
-// // });
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));

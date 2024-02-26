@@ -1,4 +1,4 @@
-export type event = {
+export interface event {
     start: {
         date: string;
     };
