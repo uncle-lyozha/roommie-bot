@@ -24,8 +24,8 @@ export const saveNewWeekToDb = async (): Promise<void | null> => {
         return null;
     }
     const today = new Date();
-    // const toDate = today.toISOString().split("T")[0];
-    let toDate = "2024-02-26"; //for test purposes
+    const toDate = today.toISOString().split("T")[0];
+    // const toDate = "2024-02-26"; // test config
     const events = calendar.items;
     const newWeek = new Week({
         startDate: toDate,

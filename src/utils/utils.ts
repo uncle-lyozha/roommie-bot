@@ -1,4 +1,6 @@
 import { calendar } from "../interfaces/interfaces";
+import { saveNewWeekToDb, updateCurrentWeek } from "./db";
+import { NotificationCenter } from "./notification-center";
 
 export const getCalendarData = async (): Promise<calendar | null> => {
     try {
@@ -23,4 +25,19 @@ export const getCalendarData = async (): Promise<calendar | null> => {
         console.error("Error fetching calendar data", error);
         return null;
     }
+};
+
+export const test = async () => {
+    console.log("Test running");
+    const notifications = new NotificationCenter();
+    console.log("For whom the Moday bell tolls.");
+    await updateCurrentWeek();
+    await saveNewWeekToDb();
+    // notifications.chatNotification();    
+    // notifications.sendNotifications(1);
+    // updateCurrentWeek();
+    // const calendar = await getCalendarData();
+    // notifications.sendNotifications(4);
+    // testSchedule.start();
+    // checkSnoozers();
 };

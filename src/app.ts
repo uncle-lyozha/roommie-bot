@@ -8,8 +8,7 @@ import {
     testSchedule,
     thursdayCheck,
 } from "./utils/schedulers";
-import { NotificationCenter } from "./utils/notification-center";
-import { saveNewWeekToDb, updateCurrentWeek } from "./utils/db";
+import { test } from "./utils/utils";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
     process.env.BOT_TOKEN as string
@@ -27,29 +26,11 @@ bot.help(ctx => {
     ctx.reply("Send /date to see where are you in time");
 });
 
-const test = async () => {
-    console.log("Test running");
-    const notifications = new NotificationCenter();
-    console.log("For whom the Moday bell tolls.");
-    await updateCurrentWeek();
-    await saveNewWeekToDb();
-    notifications.chatNotification();    
-    notifications.sendNotifications(1);
-    // updateCurrentWeek();
-    // const calendar = await getCalendarData();
-    // notifications.sendNotifications(4);
-    // testSchedule.start();
-    // checkSnoozers();
-};
-
 // test();
 
-// thursdayCheck.start();
-// snoozeCheck.start();
-// sundayCheck.start();
-
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
+thursdayCheck.start();
+snoozeCheck.start();
+sundayCheck.start();
 
 const bootstrap = async () => {
     try {
