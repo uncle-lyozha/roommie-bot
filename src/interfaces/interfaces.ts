@@ -14,7 +14,8 @@ export interface calendar {
     items: event[];
 }
 
-export interface user extends ObjectId {
+export interface user {
+    _id: ObjectId;
     name: string;
     TG: {
         username: string;
@@ -24,6 +25,7 @@ export interface user extends ObjectId {
 }
 
 export interface IWeek {
+    _id: ObjectId;
     summary: string;
     startDate: string;
     events: IEvent[];
@@ -31,14 +33,16 @@ export interface IWeek {
 }
 
 export interface IEvent {
+    // _id: ObjectId;
     userId: Types.ObjectId;
     area: string;
-    description?: string;
+    description: string;
 }
 
-export interface ISchema {
-    userTGId: number,
-    username: string,
-    area: string,
-    description: string,
+export interface ISnooze {
+    _id: ObjectId;
+    TGId: number;
+    userName: string;
+    area: string;
+    description: string
 }
