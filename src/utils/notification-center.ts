@@ -5,6 +5,7 @@ import { Markup } from "telegraf";
 import { Snooze, Week, addNewSnooze, findCurrentWeek } from "./db";
 
 export class NotificationCenter {
+    
     constructor() {}
 
     async sendNotifications(option: number) {
