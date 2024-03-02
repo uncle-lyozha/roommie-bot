@@ -9,7 +9,7 @@ import {
 import mongoose, { ObjectId } from "mongoose";
 import { WeekSchema } from "../schemas/week.schema";
 import { UserSchema } from "../schemas/user.schema";
-import { getCalendarData } from "./utils";
+import { getCalendarData } from "./calendar.service";
 import { SnoozeSchema } from "../schemas/snooze.schema";
 
 export const Week = mongoose.model("Week", WeekSchema);
@@ -108,7 +108,7 @@ export const addNewSnooze = async (
     }
 };
 
-export const checkSnoozers = async () => {
+export const getSnoozers = async () => {
     try {
         const allSnoozes: ISnooze[] = await Snooze.find({});
         return allSnoozes;
