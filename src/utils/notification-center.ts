@@ -1,12 +1,16 @@
-import mongoose from "mongoose";
 import { bot } from "../app";
-import { IEvent, IWeek, event, user } from "../interfaces/interfaces";
+import { user } from "../interfaces/interfaces";
 import { Markup } from "telegraf";
-import { Snooze, Week, addNewSnooze, findCurrentWeek } from "./db";
+import { addNewSnooze, findCurrentWeek } from "./db";
 
 export class NotificationCenter {
-    
     constructor() {}
+
+    private keyboardOption = {
+        onlyGotcha: 0,
+        snoozeDone: 1,
+        onlyDone: 2,
+    };
 
     async sendNotifications(option: number) {
         // 1 - monday, first notification
@@ -21,18 +25,38 @@ export class NotificationCenter {
                 const area = task.area;
                 const description = task.description;
 
-                if (option === 1) {
-                    this.responseKeyboard(TGId, userName, area, description, 0);
-                }
-                if (option === 4) {
-                    this.responseKeyboard(TGId, userName, area, description, 1);
-                }
-                if (option === 7) {
-                    this.responseKeyboard(TGId, userName, area, description, 2);
+                switch (option) {
+                    case 1:
+                        this.sendKeyboard(
+                            TGId,
+                            userName,
+                            area,
+                            description,
+                            this.keyboardOption.onlyGotcha
+                        );
+                        break;
+                    case 4:
+                        this.sendKeyboard(
+                            TGId,
+                            userName,
+                            area,
+                            description,
+                            this.keyboardOption.snoozeDone
+                        );
+                        break;
+                    case 7:
+                        this.sendKeyboard(
+                            TGId,
+                            userName,
+                            area,
+                            description,
+                            this.keyboardOption.onlyDone
+                        );
+                        break;
                 }
             }
         } else {
-            console.warn(`Record ${currentWeek} not found in the db.`);
+            throw new Error("Current week not found");
         }
     }
 
@@ -43,10 +67,16 @@ export class NotificationCenter {
         description: string
     ) {
         console.log(`A reminder to ${userName} sent.`);
-        this.responseKeyboard(TGId, userName, area, description, 1);
+        this.sendKeyboard(
+            TGId,
+            userName,
+            area,
+            description,
+            this.keyboardOption.snoozeDone
+        );
     }
 
-    async chatNotification() {
+    async sendChatNotification() {
         const currentWeek = await findCurrentWeek();
         let chatMessage = "THIS WEEK ON DUTY:\n";
         if (currentWeek) {
@@ -58,7 +88,7 @@ export class NotificationCenter {
         }
     }
 
-    private async responseKeyboard(
+    private async sendKeyboard(
         TGId: number,
         userName: string,
         area: string,
@@ -72,34 +102,32 @@ export class NotificationCenter {
         let text: string = "";
         let keyboard;
 
-        if (option === 0) {
-            text = `Congratulations! This week you are responsible for ${area}!\n
-            Your tasks are:\n ${description}`;
-            keyboard = Markup.inlineKeyboard([
-                Markup.button.callback("Gotcha 👍", "cb 0"),
-            ]);
-        }
-
-        if (option === 1) {
-            text = `Reminder! This week you are responsible for ${area}!
-            Here's what you should do:\n ${description}`;
-            keyboard = [
-                [Markup.button.callback("The job is done! 🤌 🕶️", "cb 1")],
-                [Markup.button.callback("Snooze... 🦥", "cb 2")],
-            ];
-        }
-
-        if (option === 2) {
-            text = `Final reminder! Please clean the ${area}!
-            Your tasks are:\n ${description}`;
-            keyboard = [
-                [
-                    Markup.button.callback(
-                        "No more snoozes, do it and hit me 👍",
-                        "cb 0"
-                    ),
-                ],
-            ];
+        switch (option) {
+            case 0:
+                text = `Congratulations! This week you are responsible for ${area}!\n
+                Your tasks are:\n ${description}`;
+                keyboard = [[Markup.button.callback("Gotcha 👍", "confirm")]];
+                break;
+            case 1:
+                text = `Reminder! This week you are responsible for ${area}!
+                Here's what you should do:\n ${description}`;
+                keyboard = [
+                    [Markup.button.callback("The job is done! 🤌 🕶️", "done")],
+                    [Markup.button.callback("Snooze... 🦥", "snooze")],
+                ];
+                break;
+            case 2:
+                text = `Final reminder! Please clean the ${area}!
+                Your tasks are:\n ${description}`;
+                keyboard = [
+                    [
+                        Markup.button.callback(
+                            "No more snoozes, do it and hit me 👍",
+                            "done"
+                        ),
+                    ],
+                ];
+                break;
         }
 
         await bot.telegram.sendMessage(
@@ -108,15 +136,15 @@ export class NotificationCenter {
             Markup.inlineKeyboard(keyboard as any)
         );
 
-        bot.action("cb 0", ctx => {
+        bot.action("confirm", ctx => {
             console.log(`${userName} recieved the task.`);
             ctx.sendMessage("Cool!");
         });
-        bot.action("cb 1", ctx => {
+        bot.action("done", ctx => {
             console.log(`${userName} has done his job.`);
             ctx.editMessageText("You're the best ... around! 🏆");
         });
-        bot.action("cb 2", async ctx => {
+        bot.action("snooze", async ctx => {
             console.log(`${userName} snoozed his task.`);
             ctx.editMessageText("Ok, I'll remind you tomorrow.");
             await addNewSnooze(TGId, userName, area, description);

@@ -2,7 +2,7 @@ import "dotenv/config";
 import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import mongoose from "mongoose";
-import { snoozeCheck, sundayCheck, thursdayCheck } from "./utils/schedulers";
+import { mondayCheck, snoozeCheck, sundayCheck, thursdayCheck } from "./utils/schedulers";
 import { test } from "./test/test";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
@@ -23,6 +23,7 @@ bot.help(ctx => {
 
 test();
 
+// mondayCheck.start()
 // thursdayCheck.start();
 // snoozeCheck.start();
 // sundayCheck.start();
