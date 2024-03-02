@@ -1,16 +1,11 @@
 import * as cron from "node-cron";
-import { NotificationCenter } from "./notification-center";
-import {
-    deleteSnooze,
-    getSnoozers,
-    saveNewWeekToDb,
-    updateCurrentWeek,
-} from "./db";
+import { NotificationCenter } from "./notification.service";
+import { getSnoozers, saveNewWeekToDb, updateCurrentWeek } from "./db";
 
 enum NotificationOption {
     monday = 1,
     snooze = 4,
-    sunday = 7
+    sunday = 7,
 }
 
 const notifications = new NotificationCenter();
@@ -19,7 +14,7 @@ export const mondayCheck = cron.schedule("0 0 12 * * 1", async () => {
     console.log("For whom the Moday bell tolls.");
     await updateCurrentWeek();
     await saveNewWeekToDb();
-    notifications.sendChatNotification();    
+    notifications.sendChatNotification();
     notifications.sendNotifications(NotificationOption.monday);
 });
 
