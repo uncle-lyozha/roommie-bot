@@ -1,17 +1,16 @@
-import { IEvent, ISnooze, IWeek, calendar, event, user } from "../interfaces/interfaces";
+import {
+    IEvent,
+    ISnooze,
+    IWeek,
+    calendar,
+    event,
+    user,
+} from "../interfaces/interfaces";
 import mongoose, { ObjectId } from "mongoose";
 import { WeekSchema } from "../schemas/week.schema";
 import { UserSchema } from "../schemas/user.schema";
 import { getCalendarData } from "./utils";
 import { SnoozeSchema } from "../schemas/snooze.schema";
-
-const TEST_CHAT = -4065145869;
-
-const SAU = 227988482; //saushkin_av
-const CHIRILL = 8968145; //NewGuyNitro
-const PAKHAN = 414171939; //bessonoffp
-const VIT = 111471; //myshlaev
-const LYOZHA = 268482275; //Lyozha
 
 export const Week = mongoose.model("Week", WeekSchema);
 export const User = mongoose.model("User", UserSchema);
@@ -21,7 +20,7 @@ export const saveNewWeekToDb = async (): Promise<void | null> => {
     const calendar = await getCalendarData();
     if (!calendar) {
         console.error("Calendar data is missing.");
-        return null;
+        return null; // add retry
     }
     const today = new Date();
     const toDate = today.toISOString().split("T")[0];
@@ -111,18 +110,18 @@ export const addNewSnooze = async (
 
 export const checkSnoozers = async () => {
     try {
-        const allSnoozes:ISnooze[] = await Snooze.find({});
+        const allSnoozes: ISnooze[] = await Snooze.find({});
         return allSnoozes;
     } catch (err) {
-        console.error("Error updating Snoozers collection:", err);
+        console.error("Error getting Snoozers: ", err);
     }
 };
 
 export const deleteSnooze = async (id: ObjectId) => {
     try {
         await Snooze.findByIdAndDelete(id);
-        console.log("Document deleted successfully:", id);
+        console.log("Document deleted successfully: ", id);
     } catch (error) {
-        console.error("Error deleting document:", error);
+        console.error("Error deleting Snooze document: ", error);
     }
-}
+};

@@ -2,13 +2,8 @@ import "dotenv/config";
 import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import mongoose from "mongoose";
-import {
-    snoozeCheck,
-    sundayCheck,
-    testSchedule,
-    thursdayCheck,
-} from "./utils/schedulers";
-import { test } from "./utils/utils";
+import { snoozeCheck, sundayCheck, thursdayCheck } from "./utils/schedulers";
+import { test } from "./test/test";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
     process.env.BOT_TOKEN as string
@@ -26,25 +21,19 @@ bot.help(ctx => {
     ctx.reply("Send /date to see where are you in time");
 });
 
-// test();
+test();
 
-thursdayCheck.start();
-snoozeCheck.start();
-sundayCheck.start();
+// thursdayCheck.start();
+// snoozeCheck.start();
+// sundayCheck.start();
 
 const bootstrap = async () => {
-    try {
-        if (!process.env.MDB_USER || !process.env.MDB_PASS) {
-            console.error("DB credentials are not provided.");
-        }
-        bot.launch();
-        await mongoose.connect(
-            `mongodb+srv://${process.env.MDB_USER}:${process.env.MDB_PASS}@roommie-cluster0.aoz01ma.mongodb.net/?retryWrites=true&w=majority&appName=Roommie-Cluster0`
-        );
-        console.log("Roommie is online");
-    } catch (err) {
-        console.error("DB connection error.");
+    if (!process.env.MONGO) {
+        console.error("DB credentials are not provided.");
     }
+    bot.launch();
+    await mongoose.connect(process.env.MONGO as string);
+    console.log("Roommie is online");
 };
 
 bootstrap();
