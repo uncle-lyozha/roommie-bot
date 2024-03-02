@@ -22,5 +22,9 @@
     "node-cron": "^3.0.3",
     "node-schedule": "^2.1.1",
     "telegraf": "^4.15.3"
+  },
+  "engines": {
+    "node": "20.5.1",
+    "npm": "10.2.5"
   }
 }
