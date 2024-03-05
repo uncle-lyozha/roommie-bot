@@ -1,8 +1,7 @@
 import { ObjectId } from "mongoose";
-import * as mongoose from "mongoose";
 import { Schema, Types } from "mongoose";
 
-export interface event {
+export interface ICalendarEvent {
     start: {
         date: string;
     };
@@ -10,11 +9,11 @@ export interface event {
     description?: string;
 }
 
-export interface calendar {
-    items: event[];
+export interface ICalendar {
+    items: ICalendarEvent[];
 }
 
-export interface user {
+export interface IUser {
     _id: ObjectId;
     name: string;
     TG: {

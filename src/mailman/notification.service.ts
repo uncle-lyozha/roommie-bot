@@ -1,5 +1,5 @@
 import { bot } from "../app";
-import { IWeek, user } from "../interfaces/interfaces";
+import { IUser, IWeek } from "../interfaces/interfaces";
 import { Markup } from "telegraf";
 import { INotificationService } from "./notificationService.interface";
 import { saveNewSnooze } from "../utils/schedulers";
@@ -18,7 +18,7 @@ export class NotificationCenter implements INotificationService {
         // 4 - thursday-saturday, can snooze
         // 7 - sunday, can't snooze
         for (const task of currentWeek.events) {
-            const user = task.userId as unknown as user;
+            const user = task.userId as unknown as IUser;
             const TGId = user.TG.tgId;
             const userName = user.name;
             const area = task.area;

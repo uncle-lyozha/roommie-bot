@@ -1,4 +1,3 @@
-import * as mongoose from "mongoose";
 import { Schema } from "mongoose";
 
 export const UserSchema = new Schema({
