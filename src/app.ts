@@ -21,12 +21,12 @@ bot.help(ctx => {
     ctx.reply("Send /date to see where are you in time");
 });
 
-test();
+// test();
 
-// mondayCheck.start()
-// thursdayCheck.start();
-// snoozeCheck.start();
-// sundayCheck.start();
+mondayCheck.start()
+thursdayCheck.start();
+snoozeCheck.start();
+sundayCheck.start();
 
 const bootstrap = async () => {
     if (!process.env.MONGO) {

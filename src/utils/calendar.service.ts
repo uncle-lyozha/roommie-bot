@@ -1,6 +1,6 @@
 import { calendar } from "../interfaces/interfaces";
 import { saveNewWeekToDb, updateCurrentWeek } from "./db";
-import { NotificationCenter } from "./notification.service";
+import { NotificationCenter } from "../mailman/notification.service";
 
 export const getCalendarData = async (): Promise<calendar | null> => {
     if (!process.env.CALEND) {
