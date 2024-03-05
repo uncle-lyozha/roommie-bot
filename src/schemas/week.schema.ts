@@ -1,4 +1,3 @@
-import * as mongoose from "mongoose";
 import { Schema, Types } from "mongoose";
 import { IWeek } from "../interfaces/interfaces";
 

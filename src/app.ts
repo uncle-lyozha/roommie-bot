@@ -3,7 +3,7 @@ import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import mongoose from "mongoose";
 import { mondayCheck, snoozeCheck, sundayCheck, thursdayCheck } from "./utils/schedulers";
-import { test } from "./test/test";
+// import { test } from "./test/test";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
     process.env.BOT_TOKEN as string
@@ -17,7 +17,6 @@ bot.start(ctx => {
 });
 bot.help(ctx => {
     ctx.reply("Send /start to receive a greeting");
-    // ctx.reply("Send /quit to stop the bot");
     ctx.reply("Send /date to see where are you in time");
 });
 

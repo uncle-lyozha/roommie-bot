@@ -1,8 +1,6 @@
-import { calendar } from "../interfaces/interfaces";
-import { saveNewWeekToDb, updateCurrentWeek } from "./db";
-import { NotificationCenter } from "../mailman/notification.service";
+import { ICalendar } from "../interfaces/interfaces";
 
-export const getCalendarData = async (): Promise<calendar | null> => {
+export const getCalendarData = async (): Promise<ICalendar | null> => {
     if (!process.env.CALEND) {
         console.error("Missing required environmental variables for Calendar");
         return null;
@@ -10,5 +8,5 @@ export const getCalendarData = async (): Promise<calendar | null> => {
     let apiCall = await fetch(process.env.CALEND as string);
     let apiResponse = await apiCall.json();
     // retry if error
-    return apiResponse as calendar;
+    return apiResponse as ICalendar;
 };
