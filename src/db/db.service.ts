@@ -34,7 +34,7 @@ export class DBService implements IDBService {
                 let userName = event.summary.split(" ")[1];
                 let area = event.summary.split(" ")[0];
                 let description = event.description as string;
-                this.populateEvents(newWeek, userName, area, description);
+                await this.populateEvents(newWeek, userName, area, description);
             }
         }
         newWeek.summary = summary;
