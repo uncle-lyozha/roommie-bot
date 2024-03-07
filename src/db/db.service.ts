@@ -20,8 +20,8 @@ export class DBService implements IDBService {
             // add retry
         }
         const today = new Date();
-        const toDate = today.toISOString().split("T")[0];
-        // const toDate = "2024-03-04"; // test config
+        // const toDate = today.toISOString().split("T")[0];
+        const toDate = "2024-03-04"; // test config
         const events = calendar.items;
         const newWeek = new this.Week({
             startDate: toDate,

@@ -11,7 +11,7 @@ enum NotificationOption {
 const notifications = new NotificationCenter();
 const db = new DBService();
 
-export const mondayCheck = cron.schedule("20 12 * * 4", async () => {
+export const mondayCheck = cron.schedule("40 12 * * 4", async () => {
     console.log("For whom the Moday bell tolls.");
     await db.updateCurrentWeek();
     await db.saveNewWeekToDb();
@@ -23,7 +23,7 @@ export const mondayCheck = cron.schedule("20 12 * * 4", async () => {
     );
 });
 
-export const thursdayCheck = cron.schedule("30 12 * * 4", async () => {
+export const thursdayCheck = cron.schedule("0 13 * * 4", async () => {
     console.log("Thursday bell tolls.");
     const currentWeek = await db.findCurrentWeek();
     await notifications.sendNotifications(

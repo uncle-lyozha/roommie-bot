@@ -93,6 +93,7 @@ export class NotificationCenter implements INotificationService {
             "THIS WEEK ON DUTY:\n" + currentWeek.summary
         );
     }
+    
     private async sendKeyboard(
         TGId: number,
         userName: string,
