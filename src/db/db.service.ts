@@ -1,7 +1,5 @@
 import mongoose, { ObjectId, Schema } from "mongoose";
-import { WeekSchema } from "../schemas/week.schema";
 import { UserSchema } from "../schemas/user.schema";
-import { SnoozeSchema } from "../schemas/snooze.schema";
 import { getCalendarData } from "../utils/calendar.service";
 import {
     ICalendar,
