@@ -12,15 +12,20 @@ import {
 import { IDBService } from "./db.interface";
 import { TaskSchema } from "../schemas/task.schema";
 import { taskStatus } from "../utils/constants";
+import { ICalendarService } from "../calendar/calendar.interface";
 
 export class DBService implements IDBService {
-    constructor() {}
+    private calendar: ICalendarService;
+
+    constructor(calendar: ICalendarService) {
+        this.calendar = calendar;
+    }
 
     private Task = mongoose.model("Task", TaskSchema);
     private User = mongoose.model("User", UserSchema);
 
     async populateTasks(): Promise<void> {
-        const calendar = await getCalendarData();
+        const calendar = await this.calendar.getCalendarData();
         if (!calendar) {
             console.error("Calendar data is missing.");
             throw new Error("Can not retrieve calendar data");

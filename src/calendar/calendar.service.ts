@@ -1,7 +1,7 @@
 import { ICalendar } from "../interfaces/interfaces";
 import { ICalendarService } from "./calendar.interface";
 
-class CalendarService implements ICalendarService {
+export class CalendarService implements ICalendarService {
     constructor() {}
 
     async getCalendarData (): Promise<ICalendar>{

@@ -1,6 +1,7 @@
 import * as cron from "node-cron";
 import { NotificationCenter } from "../mailman/notification.service";
 import { DBService } from "../db/db.service";
+import { CalendarService } from "../calendar/calendar.service";
 
 export enum NotificationOption {
     monday = 1,
@@ -9,7 +10,8 @@ export enum NotificationOption {
 }
 
 const notifications = new NotificationCenter();
-const db = new DBService();
+const Calendar = new CalendarService();
+const db = new DBService(Calendar);
 
 export const mondayCheck = cron.schedule("0 11 * * 1", async () => {
     console.log("For whom the Moday bell tolls.");

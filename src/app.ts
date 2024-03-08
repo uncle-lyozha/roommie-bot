@@ -9,22 +9,23 @@ import {
     thursdayCheck,
 } from "./utils/schedulers";
 import { test } from "./test/test";
+import { DBService } from "./db/db.service";
+import { CalendarService } from "./calendar/calendar.service";
+import { MailmanService } from "./mailman/mailman.service";
+import { ComposerService } from "./composer/composer.service";
+import { SchedulerService } from "./scheduler/scheduler.service";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
     process.env.TEST_BOT as string
 );
 
+const Calendar = new CalendarService();
+const Mailman = new MailmanService(bot);
+const DB = new DBService(Calendar);
+const Composer = new ComposerService(DB, Mailman);
+const Scheduler = new SchedulerService(Composer, DB);
+
 bot.use(Telegraf.log());
-
-// add menu
-bot.start(ctx => {
-    ctx.reply("Hello " + ctx.from.first_name + "!");
-});
-bot.help(ctx => {
-    ctx.reply("Send /start to receive a greeting");
-    ctx.reply("Send /date to see where are you in time");
-});
-
 
 const bootstrap = async () => {
     if (!process.env.MONGO) {
@@ -37,9 +38,6 @@ const bootstrap = async () => {
 
 bootstrap();
 
-test();
+// test();
 
-// mondayCheck.start()
-// thursdayCheck.start();
-// snoozeCheck.start();
-// sundayCheck.start();
+Scheduler.monday()
