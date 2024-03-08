@@ -2,7 +2,7 @@ import { bot } from "../app";
 import { IUser, IWeek } from "../interfaces/interfaces";
 import { Markup } from "telegraf";
 import { INotificationService } from "./notificationService.interface";
-import { saveNewSnooze } from "../utils/schedulers";
+import { NotificationOption } from "../utils/schedulers";
 
 export class NotificationCenter implements INotificationService {
     constructor() {}
@@ -13,7 +13,7 @@ export class NotificationCenter implements INotificationService {
         onlyDone: 2,
     };
 
-    async sendNotifications(currentWeek: IWeek, option: number): Promise<void> {
+    async sendNotifications(currentWeek: IWeek, option: NotificationOption): Promise<void> {
         // 1 - monday, first notification
         // 4 - thursday-saturday, can snooze
         // 7 - sunday, can't snooze
@@ -24,7 +24,7 @@ export class NotificationCenter implements INotificationService {
             const area = task.area;
             const description = task.description;
             switch (option) {
-                case 1:
+                case NotificationOption.monday:
                     this.sendKeyboard(
                         TGId,
                         userName,
@@ -33,7 +33,7 @@ export class NotificationCenter implements INotificationService {
                         this.keyboardOption.onlyGotcha
                     );
                     break;
-                case 4:
+                case NotificationOption.snooze:
                     this.sendKeyboard(
                         TGId,
                         userName,
@@ -42,7 +42,7 @@ export class NotificationCenter implements INotificationService {
                         this.keyboardOption.snoozeDone
                     );
                     break;
-                case 7:
+                case NotificationOption.sunday:
                     this.sendKeyboard(
                         TGId,
                         userName,
@@ -93,7 +93,7 @@ export class NotificationCenter implements INotificationService {
             "THIS WEEK ON DUTY:\n" + currentWeek.summary
         );
     }
-    
+
     private async sendKeyboard(
         TGId: number,
         userName: string,
@@ -136,12 +136,6 @@ export class NotificationCenter implements INotificationService {
                 break;
         }
 
-        await bot.telegram.sendMessage(
-            TGId,
-            text,
-            Markup.inlineKeyboard(keyboard as any)
-        );
-
         bot.action("confirm", ctx => {
             console.log(`${userName} recieved the task.`);
             ctx.sendMessage("Cool!");
@@ -153,7 +147,14 @@ export class NotificationCenter implements INotificationService {
         bot.action("snooze", async ctx => {
             console.log(`${userName} snoozed his task.`);
             ctx.editMessageText("Ok, I'll remind you tomorrow.");
-            await saveNewSnooze(TGId, userName, area, description);
+            // await saveNewSnooze(TGId, userName, area, description);
         });
+
+        await bot.telegram.sendMessage(
+            TGId,
+            text,
+            Markup.inlineKeyboard(keyboard as any)
+        );
+
     }
 }

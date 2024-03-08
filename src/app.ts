@@ -2,11 +2,16 @@ import "dotenv/config";
 import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import mongoose from "mongoose";
-import { mondayCheck, snoozeCheck, sundayCheck, thursdayCheck } from "./utils/schedulers";
-// import { test } from "./test/test";
+import {
+    mondayCheck,
+    snoozeCheck,
+    sundayCheck,
+    thursdayCheck,
+} from "./utils/schedulers";
+import { test } from "./test/test";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
-    process.env.BOT_TOKEN as string
+    process.env.TEST_BOT as string
 );
 
 bot.use(Telegraf.log());
@@ -20,12 +25,6 @@ bot.help(ctx => {
     ctx.reply("Send /date to see where are you in time");
 });
 
-// test();
-
-mondayCheck.start()
-thursdayCheck.start();
-snoozeCheck.start();
-sundayCheck.start();
 
 const bootstrap = async () => {
     if (!process.env.MONGO) {
@@ -37,3 +36,10 @@ const bootstrap = async () => {
 };
 
 bootstrap();
+
+test();
+
+// mondayCheck.start()
+// thursdayCheck.start();
+// snoozeCheck.start();
+// sundayCheck.start();
