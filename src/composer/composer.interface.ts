@@ -1,3 +1,6 @@
+import { MessageType, TaskType } from "../utils/types";
+
 export interface IComposer {
-    composeTGMessage(): Promise<void>;
+    composeTGPrivateMessage(task: TaskType): Promise<MessageType>;
+    composeTGChatMessage(): Promise<MessageType>;
 }

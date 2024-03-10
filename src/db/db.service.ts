@@ -13,6 +13,7 @@ import { IDBService } from "./db.interface";
 import { TaskSchema } from "../schemas/task.schema";
 import { taskStatus } from "../utils/constants";
 import { ICalendarService } from "../calendar/calendar.interface";
+import { TaskType } from "../utils/types";
 
 export class DBService implements IDBService {
     private calendar: ICalendarService;
@@ -40,7 +41,7 @@ export class DBService implements IDBService {
             if (dateToCheck === event.start.date) {
                 summary += event.summary + "\n";
                 let userName = event.summary.split(" ")[1];
-                let TGId = await this.findUser(userName);
+                let TGId = await this.findUserByName(userName);
                 let area = event.summary.split(" ")[0];
                 let description = event.description as string;
                 let status = taskStatus.new;
@@ -59,7 +60,14 @@ export class DBService implements IDBService {
         }
     }
 
-    private async findUser(userName: string): Promise<number> {
+    async fetchNewTasks(): Promise<TaskType[]> {
+        const tasks: TaskType[] = await this.Task.find({
+            status: taskStatus.new,
+        });
+        return tasks;
+    }
+
+    private async findUserByName(userName: string): Promise<number> {
         let user: IUser | null = await this.User.findOne({ name: userName });
         if (user) {
             const userId = user.TG.tgId;

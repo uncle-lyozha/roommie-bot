@@ -1,6 +1,7 @@
-import { Context, Markup, Telegraf } from "telegraf";
+import { Context, Telegraf } from "telegraf";
 import { IMailman } from "./mailman.interface";
 import { Update } from "telegraf/typings/core/types/typegram";
+import { MessageType } from "../utils/types";
 
 export class MailmanService implements IMailman {
     private bot: Telegraf<Context<Update>>;
@@ -9,15 +10,11 @@ export class MailmanService implements IMailman {
         this.bot = bot;
     }
 
-    async sendToTG(
-        ID: number,
-        message: string,
-        keyboard?: any[]
-    ): Promise<void> {
+    async sendToTG(message: MessageType): Promise<void> {
         await this.bot.telegram.sendMessage(
-            ID,
-            message,
-            Markup.inlineKeyboard(keyboard as any)
+            message.ID,
+            message.text,
+            message.markup
         );
     }
 }

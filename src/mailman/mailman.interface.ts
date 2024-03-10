@@ -1,3 +1,5 @@
+import { MessageType } from "../utils/types";
+
 export interface IMailman {
-    sendToTG(ID: number, message: string, keyboard?: any[]): Promise<void>;
+    sendToTG(message: MessageType): Promise<void>;
 }

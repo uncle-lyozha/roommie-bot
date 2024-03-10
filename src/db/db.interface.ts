@@ -1,9 +1,11 @@
 import { ObjectId } from "mongoose";
 import { ISnooze, IWeek } from "../interfaces/interfaces";
+import { TaskType } from "../utils/types";
 
 export interface IDBService {
     populateTasks(): Promise<void>;
-    
+    fetchNewTasks(): Promise<TaskType[]>;
+
     // findCurrentWeek(): Promise<IWeek>;
     // updateCurrentWeek(): Promise<void>;
     // getSnoozers(): Promise<ISnooze[]>;
