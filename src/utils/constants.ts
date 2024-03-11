@@ -3,6 +3,7 @@ export enum taskStatus {
     pending = "pending",
     snoozed = "snoozed",
     done = "done",
+    failed = "failed"
 }
 
 export enum tgUserReplyOption {

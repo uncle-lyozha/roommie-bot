@@ -30,11 +30,13 @@ export class ComposerService implements IComposer {
             ID: 268482275,
             text: "",
             markup: [],
-            task: task
+            task: task,
         };
         // message.ID = task.TGId;
-        message.text = `Congratulations! This week you are responsible for ${task.area}.\n Your tasks are: ${task.description} `;
-        message.markup = Markup.inlineKeyboard([[Markup.button.callback("Gotcha 👍", "confirm")]] as any)
+        message.text = `${task.area} shift...\n Congratulations! This week you are responsible for ${task.area}.\nYour tasks are: ${task.description} `;
+        message.markup = Markup.inlineKeyboard([
+            [Markup.button.callback("Gotcha 👍", "confirm")],
+        ] as any);
         console.log(message);
         return message;
     }

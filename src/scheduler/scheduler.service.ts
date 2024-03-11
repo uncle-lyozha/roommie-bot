@@ -12,9 +12,6 @@ import { Update } from "telegraf/typings/core/types/typegram";
 import { tgUserReplyOption } from "../utils/constants";
 
 export class SchedulerService implements IScheduler {
-    // private composer: IComposer;
-    // private db: IDBService;
-    // private mailman: IMailman;
     private readonly bot: Telegraf<Context<Update>>;
     private readonly calendar = new CalendarService();
     private readonly DB = new DBService(this.calendar);
@@ -28,8 +25,24 @@ export class SchedulerService implements IScheduler {
 
     async monday() {
         cron.schedule("0 11 * * 1", async () => {
-            console.log("For whom the Moday bell tolls.");
+            console.log("For whom the Monday bell tolls.");
+            await this.DB.updateTaskStatuses();
             await this.DB.populateTasks();
+            const chatMessage = await this.composer.composeTGChatMessage();
+            await this.mailman.sendToTG(chatMessage);
+            const newTasks = await this.DB.fetchNewTasks();
+            for (const task of newTasks) {
+                const privateMessage =
+                    await this.composer.composeTGPrivateMessage(task);
+                await this.mailman.sendToTG(privateMessage);
+            }
+        });
+    }
+
+    async repeating() {
+        cron.schedule("0 11 * * 4-6", async () => {
+            console.log("For whom the repeating bell tolls.");
+
             // const chatMessage = await this.composer.composeTGChatMessage();
             // await this.mailman.sendToTG(chatMessage.ID, chatMessage.text, chatMessage.markup);
         });
@@ -37,7 +50,7 @@ export class SchedulerService implements IScheduler {
 
     async testCheck() {
         cron.schedule("* * * * *", async () => {
-            console.log("For whom the Moday bell tolls.");
+            console.log("For whom the Monday bell tolls.");
             // const chatMessage = await this.composer.composeTGChatMessage();
             // await this.mailman.sendToTG(chatMessage);
 
@@ -53,19 +66,34 @@ export class SchedulerService implements IScheduler {
     listener() {
         this.bot.action(tgUserReplyOption.confirm, async (ctx: Context) => {
             const userName = ctx.from?.username;
-            const userId = ctx.from?.id;
-            console.log(`${userName} recieved the task.`);
-            console.log(ctx.message);
-            await ctx.sendMessage("Cool!");
+            const messageText = ctx.text;
+            if (messageText) {
+                const area = messageText.split(" ")[0];
+                console.log(area);
+                await this.DB.setPendingTaskStatus(area);
+            }
+            console.log(`${userName} recieved his task.`);
+            await ctx.editMessageText("Cool!");
         });
         this.bot.action(tgUserReplyOption.done, async (ctx: Context) => {
-            console.log(`User has done his job.`);
+            const userName = ctx.from?.username;
+            const messageText = ctx.text;
+            if (messageText) {
+                const area = messageText.split(" ")[0];
+                await this.DB.setDoneTaskStatus(area);
+            }
+            console.log(`${userName} has done his job.`);
             await ctx.editMessageText("You're the best ... around! 🏆");
         });
         this.bot.action(tgUserReplyOption.snooze, async (ctx: Context) => {
+            const userName = ctx.from?.username;
+            const messageText = ctx.text;
+            if (messageText) {
+                const area = messageText.split(" ")[0];
+                await this.DB.setSnoozedTaskStatus(area);
+            }
             console.log(`User snoozed his task.`);
             await ctx.editMessageText("Ok, I'll remind you tomorrow.");
-            // await saveNewSnooze(TGId, userName, area, description);
         });
     }
 }

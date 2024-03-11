@@ -1,14 +1,6 @@
 import mongoose, { ObjectId, Schema } from "mongoose";
 import { UserSchema } from "../schemas/user.schema";
-import { getCalendarData } from "../utils/calendar.service";
-import {
-    ICalendar,
-    ICalendarEvent,
-    IEvent,
-    ISnooze,
-    IUser,
-    IWeek,
-} from "../interfaces/interfaces";
+import { IUser } from "../interfaces/interfaces";
 import { IDBService } from "./db.interface";
 import { TaskSchema } from "../schemas/task.schema";
 import { taskStatus } from "../utils/constants";
@@ -41,7 +33,8 @@ export class DBService implements IDBService {
             if (dateToCheck === event.start.date) {
                 summary += event.summary + "\n";
                 let userName = event.summary.split(" ")[1];
-                let TGId = await this.findUserByName(userName);
+                let user = await this.findUserByName(userName);
+                let TGId = user.TG.tgId;
                 let area = event.summary.split(" ")[0];
                 let description = event.description as string;
                 let status = taskStatus.new;
@@ -53,11 +46,41 @@ export class DBService implements IDBService {
                     description: description,
                     status: status,
                     date: date,
+                    snoozedTimes: 0,
                 });
                 await newTask.save();
                 console.log("New task added to db.");
             }
         }
+    }
+
+    async updateTaskStatuses(): Promise<void> {
+        await this.Task.updateMany({
+            status: {
+                $in: [taskStatus.new, taskStatus.snoozed, taskStatus.pending],
+            },
+            $set: { status: taskStatus.failed },
+        });
+    }
+
+    async setPendingTaskStatus(area: string): Promise<void> {
+        await this.Task.findOneAndUpdate({
+            area: area,
+            $set: { status: taskStatus.pending },
+        });
+    }
+    async setSnoozedTaskStatus(area: string): Promise<void> {
+        await this.Task.findOneAndUpdate({
+            area: area,
+            $set: { status: taskStatus.snoozed },
+            $inc: { snoozedTimes: 1 },
+        });
+    }
+    async setDoneTaskStatus(area: string): Promise<void> {
+        await this.Task.findOneAndUpdate({
+            area: area,
+            $set: { status: taskStatus.done },
+        });
     }
 
     async fetchNewTasks(): Promise<TaskType[]> {
@@ -67,11 +90,10 @@ export class DBService implements IDBService {
         return tasks;
     }
 
-    private async findUserByName(userName: string): Promise<number> {
+    private async findUserByName(userName: string): Promise<IUser> {
         let user: IUser | null = await this.User.findOne({ name: userName });
         if (user) {
-            const userId = user.TG.tgId;
-            return userId;
+            return user;
         } else {
             throw new Error(`User ${userName} not found in DB.`);
         }

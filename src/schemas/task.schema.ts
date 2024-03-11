@@ -6,5 +6,6 @@ export const TaskSchema = new Schema({
     area: { type: String, required: true },
     description: { type: String, required: true },
     status: { type: String, required: true },
-    date: {type: Date}
+    date: {type: Date},
+    snoozedTimes: {type: Number, required: true}
 });

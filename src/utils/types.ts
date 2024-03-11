@@ -1,7 +1,8 @@
-import { InlineKeyboardMarkup } from "telegraf/typings/core/types/typegram";
 import { taskStatus } from "./constants";
+import { ObjectId } from "mongoose";
 
 export type TaskType = {
+    _id: ObjectId;
     userName: string;
     TGId: number;
     area: string;

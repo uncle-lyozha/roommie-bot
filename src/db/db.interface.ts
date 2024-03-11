@@ -4,6 +4,8 @@ import { TaskType } from "../utils/types";
 
 export interface IDBService {
     populateTasks(): Promise<void>;
+    updateTaskStatuses(): Promise<void>;
+    setPendingTaskStatus(area: string): Promise<void>;
     fetchNewTasks(): Promise<TaskType[]>;
 
     // findCurrentWeek(): Promise<IWeek>;
