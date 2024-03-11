@@ -1,6 +1,5 @@
 import { Markup } from "telegraf";
 import { IDBService } from "../db/db.interface";
-import { IMailman } from "../mailman/mailman.interface";
 import { MessageType, TaskType } from "../utils/types";
 import { IComposer } from "./composer.interface";
 import { tgUserReplyOption } from "../utils/constants";

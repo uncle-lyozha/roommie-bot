@@ -2,7 +2,6 @@ import { Context, Telegraf } from "telegraf";
 import { IMailman } from "./mailman.interface";
 import { Update } from "telegraf/typings/core/types/typegram";
 import { MessageType } from "../utils/types";
-import { tgUserReplyOption } from "../utils/constants";
 
 export class MailmanService implements IMailman {
     private bot: Telegraf<Context<Update>>;

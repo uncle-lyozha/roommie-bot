@@ -3,7 +3,6 @@ import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import mongoose from "mongoose";
 import { SchedulerService } from "./scheduler/scheduler.service";
-import { tgUserReplyOption } from "./utils/constants";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
     process.env.TEST_BOT as string

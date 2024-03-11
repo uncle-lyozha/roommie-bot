@@ -22,26 +22,3 @@ export interface IUser {
     };
     rating: number;
 }
-
-export interface IWeek {
-    _id: ObjectId;
-    summary: string;
-    startDate: string;
-    events: IEvent[];
-    isCurrent: boolean;
-}
-
-export interface IEvent {
-    // _id: ObjectId;
-    userId: Types.ObjectId;
-    area: string;
-    description: string;
-}
-
-export interface ISnooze {
-    _id: ObjectId;
-    TGId: number;
-    userName: string;
-    area: string;
-    description: string
-}
