@@ -9,12 +9,12 @@ export type TaskType = {
     description: string;
     status: taskStatus;
     date: Date;
+    snoozedTimes: number;
 };
 
 export type MessageType = {
     ID: number;
     text: string;
     markup?: any;
-    task?: TaskType
-    // markup?: InlineKeyboardMarkup;
+    task?: TaskType;
 };

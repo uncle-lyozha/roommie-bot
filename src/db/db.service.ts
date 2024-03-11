@@ -64,28 +64,35 @@ export class DBService implements IDBService {
     }
 
     async setPendingTaskStatus(area: string): Promise<void> {
-        await this.Task.findOneAndUpdate({
-            area: area,
-            $set: { status: taskStatus.pending },
-        });
-    }
-    async setSnoozedTaskStatus(area: string): Promise<void> {
-        await this.Task.findOneAndUpdate({
-            area: area,
-            $set: { status: taskStatus.snoozed },
-            $inc: { snoozedTimes: 1 },
-        });
+        await this.Task.findOneAndUpdate(
+            { area: area },
+            { status: taskStatus.pending }
+        );
     }
     async setDoneTaskStatus(area: string): Promise<void> {
-        await this.Task.findOneAndUpdate({
-            area: area,
-            $set: { status: taskStatus.done },
-        });
+        await this.Task.findOneAndUpdate(
+            { area: area },
+            { status: taskStatus.done }
+        );
+    }
+    async setSnoozedTaskStatus(area: string): Promise<void> {
+        await this.Task.findOneAndUpdate(
+            { area: area },
+            { status: taskStatus.snoozed, $inc: { snoozedTimes: 1 } }
+        );
     }
 
     async fetchNewTasks(): Promise<TaskType[]> {
         const tasks: TaskType[] = await this.Task.find({
             status: taskStatus.new,
+        });
+        return tasks;
+    }
+    async fetchPendingTasks(): Promise<TaskType[]> {
+        const tasks: TaskType[] = await this.Task.find({
+            status: {
+                $in: [taskStatus.new, taskStatus.snoozed, taskStatus.pending],
+            },
         });
         return tasks;
     }
