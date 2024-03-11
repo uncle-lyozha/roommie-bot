@@ -26,7 +26,7 @@ export class DBService implements IDBService {
         }
         const date = new Date().toISOString();
         // const dateToCheck = date.split("T")[0];
-        const dateToCheck = "2024-03-04"; // test config
+        const dateToCheck = "2024-03-11"; // test config
         const events = calendar.items;
         let summary: string = "";
         for (const event of events) {
@@ -54,32 +54,36 @@ export class DBService implements IDBService {
         }
     }
 
-    async updateTaskStatuses(): Promise<void> {
-        await this.Task.updateMany({
-            status: {
-                $in: [taskStatus.new, taskStatus.snoozed, taskStatus.pending],
+    async setFailedTaskStatuses(): Promise<void> {
+        await this.Task.updateMany(
+            {
+                status: {
+                    $in: [
+                        taskStatus.new,
+                        taskStatus.snoozed,
+                        taskStatus.pending,
+                    ],
+                },
             },
-            $set: { status: taskStatus.failed },
+            { status: taskStatus.failed }
+        );
+    }
+
+    async setPendingTaskStatus(taskId: string): Promise<void> {
+        await this.Task.findByIdAndUpdate(taskId, {
+            status: taskStatus.pending,
         });
     }
 
-    async setPendingTaskStatus(area: string): Promise<void> {
-        await this.Task.findOneAndUpdate(
-            { area: area },
-            { status: taskStatus.pending }
-        );
+    async setDoneTaskStatus(taskId: string): Promise<void> {
+        await this.Task.findByIdAndUpdate(taskId, { status: taskStatus.done });
     }
-    async setDoneTaskStatus(area: string): Promise<void> {
-        await this.Task.findOneAndUpdate(
-            { area: area },
-            { status: taskStatus.done }
-        );
-    }
-    async setSnoozedTaskStatus(area: string): Promise<void> {
-        await this.Task.findOneAndUpdate(
-            { area: area },
-            { status: taskStatus.snoozed, $inc: { snoozedTimes: 1 } }
-        );
+
+    async setSnoozedTaskStatus(taskId: string): Promise<void> {
+        await this.Task.findByIdAndUpdate(taskId, {
+            status: taskStatus.snoozed,
+            $inc: { snoozedTimes: 1 },
+        });
     }
 
     async fetchNewTasks(): Promise<TaskType[]> {

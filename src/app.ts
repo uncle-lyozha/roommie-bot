@@ -2,7 +2,6 @@ import "dotenv/config";
 import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import mongoose from "mongoose";
-import { test } from "./test/test";
 import { SchedulerService } from "./scheduler/scheduler.service";
 import { tgUserReplyOption } from "./utils/constants";
 

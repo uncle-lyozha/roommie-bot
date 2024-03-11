@@ -34,7 +34,7 @@ export class ComposerService implements IComposer {
             task: task,
         };
         // message.ID = task.TGId;
-        message.text = `${task.area} shift...\n Congratulations! This week you are responsible for ${task.area}.\nYour tasks are: ${task.description} `;
+        message.text = `${task._id} \n${task.area} shift...\n Congratulations! This week you are responsible for ${task.area}.\nYour tasks are: ${task.description}\n`;
         message.markup = Markup.inlineKeyboard([
             [Markup.button.callback("Gotcha 👍", tgUserReplyOption.confirm)],
         ] as any);
@@ -49,7 +49,7 @@ export class ComposerService implements IComposer {
             task: task,
         };
         // message.ID = task.TGId;
-        message.text = `${task.area} shift...\n Reminder! This week you are responsible for ${task.area}!
+        message.text = `${task._id} \n${task.area} shift...\n Hi, I got back to remind you something! This week you are responsible for ${task.area}!
         Here's what you should do:\n ${task.description}`;
         message.markup = Markup.inlineKeyboard([
             [
@@ -71,7 +71,7 @@ export class ComposerService implements IComposer {
             task: task,
         };
         // message.ID = task.TGId;
-        message.text = `${task.area} shift...\n Final reminder! Please clean the ${task.area}.\nYour tasks are: ${task.description} `;
+        message.text = `${task._id} \n${task.area} shift...\n Final reminder! Please clean the ${task.area}.\nYour tasks are: ${task.description} `;
         message.markup = Markup.inlineKeyboard([
             [
                 Markup.button.callback(
