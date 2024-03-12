@@ -38,7 +38,6 @@ export class DBService implements IDBService {
                 let area = event.summary.split(" ")[0];
                 let description = event.description as string;
                 let status = taskStatus.new;
-                // let date = new Date().toISOString;
                 let newTask = new this.Task({
                     userName: userName,
                     TGId: TGId,
@@ -49,9 +48,9 @@ export class DBService implements IDBService {
                     snoozedTimes: 0,
                 });
                 await newTask.save();
-                console.log("New task added to db.");
             }
         }
+        console.log("New tasks added to db.");
     }
 
     async setFailedTaskStatuses(): Promise<void> {
@@ -86,6 +85,9 @@ export class DBService implements IDBService {
         });
     }
 
+    async deleteAll(): Promise<void> {
+        await this.Task.deleteMany();
+    }
     async fetchNewTasks(): Promise<TaskType[]> {
         const tasks: TaskType[] = await this.Task.find({
             status: taskStatus.new,
