@@ -24,7 +24,7 @@ const bootstrap = async () => {
 bootstrap();
 
 Scheduler.listener();
-Scheduler.monday()
-Scheduler.repeating()
+Scheduler.monday();
+Scheduler.repeating();
 
 // Scheduler.testCheck();
