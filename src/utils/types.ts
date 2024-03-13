@@ -18,3 +18,13 @@ export type MessageType = {
     markup?: any;
     task?: TaskType;
 };
+
+export type UserType = {
+    _id: ObjectId;
+    name: string;
+    TG: {
+        username: string;
+        tgId: number;
+    };
+    rating: number;
+}

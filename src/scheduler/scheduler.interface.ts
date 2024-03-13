@@ -1,4 +1,4 @@
 export interface IScheduler {
     monday(): Promise<void>;
-    testCheck(): Promise<void>;
+    repeating(): Promise<void>;
 }

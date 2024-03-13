@@ -61,8 +61,8 @@ export class SchedulerService implements IScheduler {
         cron.schedule("* * * * *", async () => {
             console.log("Test bell tolls.");
             // monday test
+            // await this.DB.deleteAllTasks();
             // await this.DB.setFailedTaskStatuses();
-            // await this.DB.deleteAll();
             // await this.DB.populateTasks();
             // const chatMessage = await this.composer.composeTGChatMessage();
             // await this.mailman.sendToTG(chatMessage);

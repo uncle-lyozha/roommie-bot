@@ -1,11 +1,10 @@
 import mongoose, { ObjectId, Schema } from "mongoose";
 import { UserSchema } from "../schemas/user.schema";
-import { IUser } from "../interfaces/interfaces";
 import { IDBService } from "./db.interface";
 import { TaskSchema } from "../schemas/task.schema";
 import { taskStatus } from "../utils/constants";
 import { ICalendarService } from "../calendar/calendar.interface";
-import { TaskType } from "../utils/types";
+import { TaskType, UserType } from "../utils/types";
 
 export class DBService implements IDBService {
     private calendar: ICalendarService;
@@ -85,7 +84,7 @@ export class DBService implements IDBService {
         });
     }
 
-    async deleteAll(): Promise<void> {
+    async deleteAllTasks(): Promise<void> {
         await this.Task.deleteMany();
     }
 
@@ -113,8 +112,8 @@ export class DBService implements IDBService {
         return tasks;
     }
 
-    private async findUserByName(userName: string): Promise<IUser> {
-        let user: IUser | null = await this.User.findOne({ name: userName });
+    private async findUserByName(userName: string): Promise<UserType> {
+        let user: UserType | null = await this.User.findOne({ name: userName });
         if (user) {
             return user;
         } else {
