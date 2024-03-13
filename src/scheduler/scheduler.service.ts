@@ -62,6 +62,7 @@ export class SchedulerService implements IScheduler {
             console.log("Test bell tolls.");
             // monday test
             // await this.DB.setFailedTaskStatuses();
+            // await this.DB.deleteAll();
             // await this.DB.populateTasks();
             // const chatMessage = await this.composer.composeTGChatMessage();
             // await this.mailman.sendToTG(chatMessage);
@@ -73,18 +74,18 @@ export class SchedulerService implements IScheduler {
             // }
 
             // repeating test
-            const tasks = await this.DB.fetchPendingTasks();
-            for (const task of tasks) {
-                let privateMessage: MessageType;
-                if (task.snoozedTimes > 2) {
-                    privateMessage = await this.composer.composeTGFinalPM(task);
-                } else {
-                    privateMessage = await this.composer.composeTGRepeatingPM(
-                        task
-                    );
-                }
-                await this.mailman.sendToTG(privateMessage);
-            }
+            // const tasks = await this.DB.fetchPendingTasks();
+            // for (const task of tasks) {
+            //     let privateMessage: MessageType;
+            //     if (task.snoozedTimes > 2) {
+            //         privateMessage = await this.composer.composeTGFinalPM(task);
+            //     } else {
+            //         privateMessage = await this.composer.composeTGRepeatingPM(
+            //             task
+            //         );
+            //     }
+            //     await this.mailman.sendToTG(privateMessage);
+            // }
         });
     }
 
@@ -93,13 +94,16 @@ export class SchedulerService implements IScheduler {
             const userName = ctx.from?.username;
             const messageText = ctx.text;
             let taskId: string;
+            let objectives = "";
             if (messageText) {
                 taskId = messageText.split(":")[0];
                 await this.DB.setPendingTaskStatus(taskId);
+                const task = await this.DB.fetchTaskById(taskId);
+                objectives = task.description;
             }
             console.log(`${userName} recieved his task.`);
             await ctx.editMessageText(
-                "Good. Officer Ripley will check up on you on Thursday."
+                `Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${objectives}`
             );
         });
         this.bot.action(tgUserReplyOption.done, async (ctx: Context) => {
@@ -111,7 +115,9 @@ export class SchedulerService implements IScheduler {
                 await this.DB.setDoneTaskStatus(taskId);
             }
             console.log(`${userName} has done his job.`);
-            await ctx.editMessageText("Great! Good job, let's have some beer.");
+            await ctx.editMessageText(
+                "Great! Now we're ready to takeoff. Good job, let's have some beer."
+            );
         });
         this.bot.action(tgUserReplyOption.snooze, async (ctx: Context) => {
             const userName = ctx.from?.username;

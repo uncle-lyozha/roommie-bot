@@ -88,6 +88,16 @@ export class DBService implements IDBService {
     async deleteAll(): Promise<void> {
         await this.Task.deleteMany();
     }
+
+    async fetchTaskById(id: string): Promise<TaskType> {
+        const task: TaskType | null = await this.Task.findById(id);
+        if (task) {
+            return task;
+        } else {
+            throw new Error(`Task ${id} not found in DB.`);
+        }
+    }
+
     async fetchNewTasks(): Promise<TaskType[]> {
         const tasks: TaskType[] = await this.Task.find({
             status: taskStatus.new,
