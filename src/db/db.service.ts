@@ -1,108 +1,124 @@
-import mongoose, { ObjectId } from "mongoose";
-import { WeekSchema } from "../schemas/week.schema";
+import mongoose, { ObjectId, Schema } from "mongoose";
 import { UserSchema } from "../schemas/user.schema";
-import { SnoozeSchema } from "../schemas/snooze.schema";
-import { getCalendarData } from "../utils/calendar.service";
-import { ISnooze, IWeek } from "../interfaces/interfaces";
+import { IUser } from "../interfaces/interfaces";
 import { IDBService } from "./db.interface";
+import { TaskSchema } from "../schemas/task.schema";
+import { taskStatus } from "../utils/constants";
+import { ICalendarService } from "../calendar/calendar.interface";
+import { TaskType } from "../utils/types";
 
 export class DBService implements IDBService {
-    constructor() {}
-    private Week = mongoose.model("Week", WeekSchema);
-    private User = mongoose.model("User", UserSchema);
-    private Snooze = mongoose.model("Snooze", SnoozeSchema);
+    private calendar: ICalendarService;
 
-    async saveNewWeekToDb(): Promise<void> {
-        const calendar = await getCalendarData();
+    constructor(calendar: ICalendarService) {
+        this.calendar = calendar;
+    }
+
+    private Task = mongoose.model("Task", TaskSchema);
+    private User = mongoose.model("User", UserSchema);
+
+    async populateTasks(): Promise<void> {
+        const calendar = await this.calendar.getCalendarData();
         if (!calendar) {
             console.error("Calendar data is missing.");
             throw new Error("Can not retrieve calendar data");
             // add retry
         }
-        const today = new Date();
-        // const toDate = today.toISOString().split("T")[0];
-        const toDate = "2024-03-04"; // test config
+        const date = new Date().toISOString();
+        // const dateToCheck = date.split("T")[0];
+        const dateToCheck = "2024-03-11"; // test config
         const events = calendar.items;
-        const newWeek = new this.Week({
-            startDate: toDate,
-            isCurrent: true,
-        });
         let summary: string = "";
         for (const event of events) {
-            if (toDate === event.start.date) {
+            if (dateToCheck === event.start.date) {
                 summary += event.summary + "\n";
                 let userName = event.summary.split(" ")[1];
+                let user = await this.findUserByName(userName);
+                let TGId = user.TG.tgId;
                 let area = event.summary.split(" ")[0];
                 let description = event.description as string;
-                await this.populateEvents(newWeek, userName, area, description);
+                let status = taskStatus.new;
+                let newTask = new this.Task({
+                    userName: userName,
+                    TGId: TGId,
+                    area: area,
+                    description: description,
+                    status: status,
+                    date: date,
+                    snoozedTimes: 0,
+                });
+                await newTask.save();
             }
         }
-        newWeek.summary = summary;
-        await newWeek.save();
-        console.log("New week added to db.");
+        console.log("New tasks added to db.");
     }
 
-    private async populateEvents(
-        newWeek: IWeek,
-        userName: string,
-        area: string,
-        description: string
-    ): Promise<void> {
-        let user = await this.User.findOne({ name: userName });
-        if (user) {
-            newWeek.events.push({
-                userId: user._id,
-                area: area,
-                description: description,
-            });
-        } else {
-            console.warn(`User not found in the db.`);
-        }
-    }
-
-    async findCurrentWeek(): Promise<IWeek> {
-        const result = await this.Week.findOne({
-            isCurrent: true,
-        }).populate("events.userId");
-        if (result) {
-            return result;
-        } else {
-            throw new Error(
-                "There is no weeks in db with current value set to true."
-            );
-        }
-    }
-
-    async updateCurrentWeek(): Promise<void> {
-        await this.Week.updateOne(
-            { isCurrent: true },
-            { $set: { isCurrent: false } }
+    async setFailedTaskStatuses(): Promise<void> {
+        await this.Task.updateMany(
+            {
+                status: {
+                    $in: [
+                        taskStatus.new,
+                        taskStatus.snoozed,
+                        taskStatus.pending,
+                    ],
+                },
+            },
+            { status: taskStatus.failed }
         );
     }
 
-    async getSnoozers(): Promise<ISnooze[]> {
-        const allSnoozes = await this.Snooze.find({});
-        return allSnoozes;
-    }
-
-    async addNewSnooze(
-        TGId: number,
-        userName: string,
-        area: string,
-        description: string
-    ): Promise<void> {
-        const newSnooze = new this.Snooze({
-            TGId: TGId,
-            userName: userName,
-            area: area,
-            description: description,
+    async setPendingTaskStatus(taskId: string): Promise<void> {
+        await this.Task.findByIdAndUpdate(taskId, {
+            status: taskStatus.pending,
         });
-        await newSnooze.save();
-        console.log("New Snooze added to db.");
     }
 
-    async deleteSnooze(id: ObjectId): Promise<void> {
-        await this.Snooze.findByIdAndDelete(id);
-        console.log("Snooze deleted successfully: ", id);
+    async setDoneTaskStatus(taskId: string): Promise<void> {
+        await this.Task.findByIdAndUpdate(taskId, { status: taskStatus.done });
+    }
+
+    async setSnoozedTaskStatus(taskId: string): Promise<void> {
+        await this.Task.findByIdAndUpdate(taskId, {
+            status: taskStatus.snoozed,
+            $inc: { snoozedTimes: 1 },
+        });
+    }
+
+    async deleteAll(): Promise<void> {
+        await this.Task.deleteMany();
+    }
+
+    async fetchTaskById(id: string): Promise<TaskType> {
+        const task: TaskType | null = await this.Task.findById(id);
+        if (task) {
+            return task;
+        } else {
+            throw new Error(`Task ${id} not found in DB.`);
+        }
+    }
+
+    async fetchNewTasks(): Promise<TaskType[]> {
+        const tasks: TaskType[] = await this.Task.find({
+            status: taskStatus.new,
+        });
+        return tasks;
+    }
+    async fetchPendingTasks(): Promise<TaskType[]> {
+        const tasks: TaskType[] = await this.Task.find({
+            status: {
+                $in: [taskStatus.new, taskStatus.snoozed, taskStatus.pending],
+            },
+        });
+        return tasks;
+    }
+
+    private async findUserByName(userName: string): Promise<IUser> {
+        let user: IUser | null = await this.User.findOne({ name: userName });
+        if (user) {
+            return user;
+        } else {
+            throw new Error(`User ${userName} not found in DB.`);
+        }
     }
 }
