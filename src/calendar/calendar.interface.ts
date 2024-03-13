@@ -1,5 +1,5 @@
-import { ICalendar } from "../interfaces/interfaces";
+import { CalendarType } from "../utils/types";
 
 export interface ICalendarService {
-    getCalendarData(): Promise<ICalendar>;
+    getCalendarData(): Promise<CalendarType>;
 }
