@@ -23,7 +23,7 @@ export class SchedulerService implements IScheduler {
     }
 
     async monday() {
-        cron.schedule("0 15 * * 3", async () => {
+        cron.schedule("0 18 * * 3", async () => {
             console.log("For whom the Monday bell tolls.");
             await this.DB.setFailedTaskStatuses();
             await this.DB.populateTasks();
