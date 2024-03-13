@@ -23,7 +23,7 @@ export class SchedulerService implements IScheduler {
     }
 
     async monday() {
-        cron.schedule("0 12 * * 1", async () => {
+        cron.schedule("0 4 * * 1", async () => {
             console.log("For whom the Monday bell tolls.");
             await this.DB.setFailedTaskStatuses();
             await this.DB.populateTasks();
@@ -40,7 +40,7 @@ export class SchedulerService implements IScheduler {
     }
 
     async repeating() {
-        cron.schedule("0 11 * * 4-7", async () => {
+        cron.schedule("0 4 * * 4-7", async () => {
             console.log("For whom the repeating bell tolls.");
             const tasks = await this.DB.fetchPendingTasks();
             for (const task of tasks) {
