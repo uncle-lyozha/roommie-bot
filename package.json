@@ -4,7 +4,8 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "wach": "tsc-w",
+    "dev": "nodemon dist/app.js",
     "build": "tsc",
     "start": "node dist/app.js"
   },
