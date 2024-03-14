@@ -6,6 +6,7 @@ import { SchedulerService } from "./scheduler/scheduler.service";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
     process.env.BOT_TOKEN as string
+    // process.env.TEST_BOT as string
 );
 
 const Scheduler = new SchedulerService(bot);
@@ -26,5 +27,6 @@ bootstrap();
 Scheduler.listener();
 Scheduler.monday();
 Scheduler.repeating();
+Scheduler.sunday();
 
 // Scheduler.testCheck();

@@ -23,7 +23,7 @@ export class SchedulerService implements IScheduler {
     }
 
     async monday() {
-        cron.schedule("0 4 * * 1", async () => {
+        cron.schedule("0 11 * * 1", async () => {
             console.log("For whom the Monday bell tolls.");
             await this.DB.setFailedTaskStatuses();
             await this.DB.populateTasks();
@@ -40,18 +40,26 @@ export class SchedulerService implements IScheduler {
     }
 
     async repeating() {
-        cron.schedule("0 4 * * 4-7", async () => {
+        cron.schedule("0 11 * * 4-6", async () => {
             console.log("For whom the repeating bell tolls.");
             const tasks = await this.DB.fetchPendingTasks();
             for (const task of tasks) {
-                let privateMessage: MessageType;
-                if (task.snoozedTimes > 2) {
-                    privateMessage = await this.composer.composeTGFinalPM(task);
-                } else {
-                    privateMessage = await this.composer.composeTGRepeatingPM(
-                        task
-                    );
-                }
+                const privateMessage = await this.composer.composeTGRepeatingPM(
+                    task
+                );
+                await this.mailman.sendToTG(privateMessage);
+            }
+        });
+    }
+
+    async sunday() {
+        cron.schedule("0 11 * * 7", async () => {
+            console.log("For whom the sunday bell tolls.");
+            const tasks = await this.DB.fetchPendingTasks();
+            for (const task of tasks) {
+                const privateMessage = await this.composer.composeTGFinalPM(
+                    task
+                );
                 await this.mailman.sendToTG(privateMessage);
             }
         });
@@ -77,14 +85,12 @@ export class SchedulerService implements IScheduler {
             // const tasks = await this.DB.fetchPendingTasks();
             // for (const task of tasks) {
             //     let privateMessage: MessageType;
-            //     if (task.snoozedTimes > 2) {
-            //         privateMessage = await this.composer.composeTGFinalPM(task);
-            //     } else {
-            //         privateMessage = await this.composer.composeTGRepeatingPM(
-            //             task
-            //         );
-            //     }
+            //     privateMessage = await this.composer.composeTGFinalPM(task);
+            //     let privateMessage1 = await this.composer.composeTGRepeatingPM(
+            //         task
+            //     );
             //     await this.mailman.sendToTG(privateMessage);
+            //     await this.mailman.sendToTG(privateMessage1);
             // }
         });
     }
@@ -103,7 +109,7 @@ export class SchedulerService implements IScheduler {
             }
             console.log(`${userName} recieved his task.`);
             await ctx.editMessageText(
-                `Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${objectives}`
+                `**Cpt Dallas:** Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${objectives}`
             );
         });
         this.bot.action(tgUserReplyOption.done, async (ctx: Context) => {
@@ -116,7 +122,7 @@ export class SchedulerService implements IScheduler {
             }
             console.log(`${userName} has done his job.`);
             await ctx.editMessageText(
-                "Great! Now we're ready to takeoff. Good job, let's have some beer."
+                "**Kane:** Great! Now we're ready to investigate that distress signal the Mother woke up us for."
             );
         });
         this.bot.action(tgUserReplyOption.snooze, async (ctx: Context) => {
@@ -129,7 +135,26 @@ export class SchedulerService implements IScheduler {
             }
             console.log(`${userName} snoozed his task.`);
             await ctx.editMessageText(
-                "Ok, take your time. I'll check up on you later."
+                "**Ripley:** Ok, hang on. I'll check up on you later."
+            );
+        });
+        this.bot.action(tgUserReplyOption.help, async (ctx: Context) => {
+            const userName = ctx.from?.username;
+            const messageText = ctx.text;
+            let taskId: string;
+            if (messageText) {
+                taskId = messageText.split(":")[0];
+                await this.DB.setSnoozedTaskStatus(taskId);
+                const chatMessage = {
+                    // ID: Number(process.env.TEST_ID),
+                    ID: Number(process.env.OUR_CHAT),
+                    text: "**USCSS Nostromo alarm and notification system.** \n **Attention Crew:** Whatchman in the Galley requested for an assistance. Please be responsive to your crewmate.",
+                };
+                await this.mailman.sendToTG(chatMessage);
+            }
+            console.log(`${userName} called for a help in the Galley.`);
+            await ctx.editMessageText(
+                "**Ripley:** Understood. I'll give a call to the crew and send somebody in."
             );
         });
     }
