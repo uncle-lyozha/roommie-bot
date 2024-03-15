@@ -65,9 +65,9 @@ export class SchedulerService implements IScheduler {
         });
     }
 
-    async testCheck() {
-        cron.schedule("* * * * *", async () => {
-            console.log("Test bell tolls.");
+    // async testCheck() {
+        // cron.schedule("* * * * *", async () => {
+            // console.log("Test bell tolls.");
             // monday test
             // await this.DB.deleteAllTasks();
             // await this.DB.setFailedTaskStatuses();
@@ -92,8 +92,8 @@ export class SchedulerService implements IScheduler {
             //     await this.mailman.sendToTG(privateMessage);
             //     await this.mailman.sendToTG(privateMessage1);
             // }
-        });
-    }
+        // });
+    // }
 
     listener() {
         this.bot.action(tgUserReplyOption.confirm, async (ctx: Context) => {

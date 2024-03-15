@@ -41,9 +41,9 @@ export class ComposerService implements IComposer {
             task: task,
         };
         if (task.area === "Galley") {
-            message.text = `~${task._id}: task ID, USCSS Nostromo log.~ \nSubject: ${task.area} compartment shift... \n**Cpt Dallas:** Captain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}. It's a tough shift, you have to continiously perform your duties until Sunday.`;
+            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \n**Cpt Dallas:** Captain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}. It's a tough shift, you have to continiously perform your duties until Sunday.`;
         } else {
-            message.text = `~${task._id}: task ID, USCSS Nostromo log.~ \nSubject: ${task.area} compartment shift... \n**Cpt Dallas:** Captain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}.`;
+            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \n**Cpt Dallas:** Captain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}.`;
         }
         message.markup = Markup.inlineKeyboard([
             [
@@ -65,7 +65,7 @@ export class ComposerService implements IComposer {
             task: task,
         };
         if (task.area === "Galley") {
-            message.text = `~${task._id}: task ID, USCSS Nostromo log.~ \nSubject: ${task.area} compartment shift... \n**Ripley:** This is Warrant officer Ellen Ripley here, how is your shift in the ${task.area}? We all know it's tough in there. Let me know if you need a hand.`;
+            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \n**Ripley:** This is Warrant officer Ellen Ripley here, how is your shift in the ${task.area}? We all know it's tough in there. Let me know if you need a hand.`;
             message.markup = Markup.inlineKeyboard([
                 [
                     Markup.button.callback(
@@ -81,7 +81,7 @@ export class ComposerService implements IComposer {
                 ],
             ] as any);
         } else {
-            message.text = `~${task._id}: task ID, USCSS Nostromo log.~ \nSubject: ${task.area} compartment shift... \n**Ripley:** This is Warrant officer Ellen Ripley here, how is it going in the ${task.area}? How's the progress?`;
+            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \n**Ripley:** This is Warrant officer Ellen Ripley here, how is it going in the ${task.area}? How's the progress?`;
             message.markup = Markup.inlineKeyboard([
                 [
                     Markup.button.callback(
@@ -109,9 +109,9 @@ export class ComposerService implements IComposer {
             task: task,
         };
         if (task.area === "Galley") {
-            message.text = `~${task._id}: task ID, USCSS Nostromo log.~ \nSubject: ${task.area} shift... \n**Kane:** Executive officer Kane online, your watch in ${task.area} compartment is over. Well done, take a rest and have that beer.`;
+            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} shift... \n**Kane:** Executive officer Kane online, your watch in ${task.area} compartment is over. Well done, take a rest and have that beer.`;
         } else {
-            message.text = `~${task._id}: task ID, USCSS Nostromo log.~ \nSubject: ${task.area} shift... \n**Kane:** Executive officer Kane online, I see you still haven't complete your watch in ${task.area} compartment. Please hurry up, the beer is waiting.`;
+            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} shift... \n**Kane:** Executive officer Kane online, I see you still haven't complete your watch in ${task.area} compartment. Please hurry up, the beer is waiting.`;
         }
         message.markup = Markup.inlineKeyboard([
             [
