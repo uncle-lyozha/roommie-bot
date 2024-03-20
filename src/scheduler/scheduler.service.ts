@@ -147,7 +147,7 @@ export class SchedulerService implements IScheduler {
                 await this.DB.setSnoozedTaskStatus(taskId);
                 const chatMessage = {
                     // ID: Number(process.env.TEST_ID),
-                    ID: Number(process.env.OUR_CHAT),
+                    ID: Number(process.env.CHAT_ID),
                     text: "**USCSS Nostromo alarm and notification system.** \n **Attention Crew:** Whatchman in the Galley requested for an assistance. Please be responsive to your crewmate.",
                 };
                 await this.mailman.sendToTG(chatMessage);

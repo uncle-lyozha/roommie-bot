@@ -12,7 +12,7 @@ export class ComposerService implements IComposer {
     }
 
     async composeTGChatMessage(): Promise<MessageType> {
-        if (!process.env.OUR_CHAT) {
+        if (!process.env.CHAT_ID) {
             console.error("Chat ID is not provided.");
         }
         let message: MessageType = {
