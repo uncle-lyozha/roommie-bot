@@ -24,8 +24,8 @@ export class DBService implements IDBService {
             // add retry
         }
         const date = new Date().toISOString();
-        // const dateToCheck = date.split("T")[0];
-        const dateToCheck = "2024-03-11"; // test config
+        const dateToCheck = date.split("T")[0];
+        // const dateToCheck = "2024-03-11"; // test config
         const events = calendar.items;
         let summary: string = "";
         for (const event of events) {
