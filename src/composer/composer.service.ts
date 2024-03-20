@@ -28,7 +28,7 @@ export class ComposerService implements IComposer {
         }
         message.text =
             text +
-            "\n **Attention Assigned Crew:** A briefing will be delivered to your personal terminals shortly by supervising officers. Please be ready to receive the information.";
+            "\n**Attention Assigned Crew:** A briefing will be delivered to your personal terminals shortly by supervising officers. Please be ready to receive the information.";
         return message;
     }
 

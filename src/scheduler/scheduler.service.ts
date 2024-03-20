@@ -66,33 +66,33 @@ export class SchedulerService implements IScheduler {
     }
 
     // async testCheck() {
-        // cron.schedule("* * * * *", async () => {
-            // console.log("Test bell tolls.");
-            // monday test
-            // await this.DB.deleteAllTasks();
-            // await this.DB.setFailedTaskStatuses();
-            // await this.DB.populateTasks();
-            // const chatMessage = await this.composer.composeTGChatMessage();
-            // await this.mailman.sendToTG(chatMessage);
-            // const newTasks = await this.DB.fetchNewTasks();
-            // for (const task of newTasks) {
-            //     const privateMessage =
-            //         await this.composer.composeTGInitialPM(task);
-            //     await this.mailman.sendToTG(privateMessage);
-            // }
+    // cron.schedule("* * * * *", async () => {
+    // console.log("Test bell tolls.");
+    // monday test
+    // await this.DB.deleteAllTasks();
+    // await this.DB.setFailedTaskStatuses();
+    // await this.DB.populateTasks();
+    // const chatMessage = await this.composer.composeTGChatMessage();
+    // await this.mailman.sendToTG(chatMessage);
+    // const newTasks = await this.DB.fetchNewTasks();
+    // for (const task of newTasks) {
+    //     const privateMessage =
+    //         await this.composer.composeTGInitialPM(task);
+    //     await this.mailman.sendToTG(privateMessage);
+    // }
 
-            // repeating test
-            // const tasks = await this.DB.fetchPendingTasks();
-            // for (const task of tasks) {
-            //     let privateMessage: MessageType;
-            //     privateMessage = await this.composer.composeTGFinalPM(task);
-            //     let privateMessage1 = await this.composer.composeTGRepeatingPM(
-            //         task
-            //     );
-            //     await this.mailman.sendToTG(privateMessage);
-            //     await this.mailman.sendToTG(privateMessage1);
-            // }
-        // });
+    // repeating test
+    // const tasks = await this.DB.fetchPendingTasks();
+    // for (const task of tasks) {
+    //     let privateMessage: MessageType;
+    //     privateMessage = await this.composer.composeTGFinalPM(task);
+    //     let privateMessage1 = await this.composer.composeTGRepeatingPM(
+    //         task
+    //     );
+    //     await this.mailman.sendToTG(privateMessage);
+    //     await this.mailman.sendToTG(privateMessage1);
+    // }
+    // });
     // }
 
     listener() {
@@ -115,25 +115,26 @@ export class SchedulerService implements IScheduler {
         this.bot.action(tgUserReplyOption.done, async (ctx: Context) => {
             const userName = ctx.from?.username;
             const messageText = ctx.text;
+            console.log(`${userName} has done his job.`);
             let taskId: string;
             if (messageText) {
-                taskId = messageText.split(":")[0];
+                taskId = messageText.trim().split(":")[0];
                 await this.DB.setDoneTaskStatus(taskId);
             }
-            console.log(`${userName} has done his job.`);
             await ctx.editMessageText(
                 "**Kane:** Great! Now we're ready to investigate that distress signal the Mother woke up us for."
             );
+            // await ctx.telegram.sendPoll(process.env.OUR_CHAT as string, "How do you find username?", [""])
         });
         this.bot.action(tgUserReplyOption.snooze, async (ctx: Context) => {
             const userName = ctx.from?.username;
             const messageText = ctx.text;
+            console.log(`${userName} snoozed his task.`);
             let taskId: string;
             if (messageText) {
                 taskId = messageText.split(":")[0];
                 await this.DB.setSnoozedTaskStatus(taskId);
             }
-            console.log(`${userName} snoozed his task.`);
             await ctx.editMessageText(
                 "**Ripley:** Ok, hang on. I'll check up on you later."
             );
@@ -141,6 +142,7 @@ export class SchedulerService implements IScheduler {
         this.bot.action(tgUserReplyOption.help, async (ctx: Context) => {
             const userName = ctx.from?.username;
             const messageText = ctx.text;
+            console.log(`${userName} called for a help in the Galley.`);
             let taskId: string;
             if (messageText) {
                 taskId = messageText.split(":")[0];
@@ -152,7 +154,6 @@ export class SchedulerService implements IScheduler {
                 };
                 await this.mailman.sendToTG(chatMessage);
             }
-            console.log(`${userName} called for a help in the Galley.`);
             await ctx.editMessageText(
                 "**Ripley:** Understood. I'll give a call to the crew and send somebody in."
             );
