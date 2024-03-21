@@ -8,7 +8,8 @@ import { MailmanService } from "../mailman/mailman.service";
 import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import { tgUserReplyOption } from "../utils/constants";
-import { MessageType } from "../utils/types";
+import { MessageType, TaskType } from "../utils/types";
+import { error } from "console";
 
 export class SchedulerService implements IScheduler {
     private readonly bot: Telegraf<Context<Update>>;
@@ -109,7 +110,7 @@ export class SchedulerService implements IScheduler {
             }
             console.log(`${userName} recieved his task.`);
             await ctx.editMessageText(
-                `**Cpt Dallas:** Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${objectives}`
+                `Cpt Dallas:\n Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${objectives}`
             );
         });
         this.bot.action(tgUserReplyOption.done, async (ctx: Context) => {
@@ -117,14 +118,18 @@ export class SchedulerService implements IScheduler {
             const messageText = ctx.text;
             console.log(`${userName} has done his job.`);
             let taskId: string;
+            let task: TaskType;
             if (messageText) {
                 taskId = messageText.trim().split(":")[0];
                 await this.DB.setDoneTaskStatus(taskId);
+            } else {
+                throw new Error("TaskId is not found");
             }
+            task = await this.DB.fetchTaskById(taskId);
             await ctx.editMessageText(
-                "**Kane:** Great! Now we're ready to investigate that distress signal the Mother woke up us for."
+                "Kane:\n Great! Now we're ready to investigate that distress signal the Mother woke up us for."
             );
-            // await ctx.telegram.sendPoll(process.env.OUR_CHAT as string, "How do you find username?", [""])
+            await ctx.telegram.sendPoll(process.env.OUR_CHAT as string, `How do you assess ${userName}'s watch duty in the ${task.area}`, ["😎", "☁️", "💩"])
         });
         this.bot.action(tgUserReplyOption.snooze, async (ctx: Context) => {
             const userName = ctx.from?.username;
@@ -136,7 +141,7 @@ export class SchedulerService implements IScheduler {
                 await this.DB.setSnoozedTaskStatus(taskId);
             }
             await ctx.editMessageText(
-                "**Ripley:** Ok, hang on. I'll check up on you later."
+                "Ripley:\n Ok, hang on. I'll check up on you later."
             );
         });
         this.bot.action(tgUserReplyOption.help, async (ctx: Context) => {
@@ -155,7 +160,7 @@ export class SchedulerService implements IScheduler {
                 await this.mailman.sendToTG(chatMessage);
             }
             await ctx.editMessageText(
-                "**Ripley:** Understood. I'll give a call to the crew and send somebody in."
+                "Ripley:\n Understood. I'll give a call to the crew and send somebody in."
             );
         });
     }
