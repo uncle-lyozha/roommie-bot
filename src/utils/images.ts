@@ -1,8 +1,8 @@
 import { ImageRepType } from "./types";
 
 export const msgImage: ImageRepType = {
-    nostromo: "https://lh3.googleusercontent.com/pw/AP1GczM4XdjhjjgGNCwMo8RuAco4qqvHggob5oIIGe871cf0qgY0L_psmMCcaP7NdAbA63I5A_HAjvw9cxCCHBDoSgR2iTyzlsouUQ7p4x0_EypJxgj_ysp8ZkPZ-44EYeG_G52CuUgIy6oNBdT8YuNzkayzvQ=w900-h525-s-no-gm?authuser=0",
-    dallas: "https://lh3.googleusercontent.com/pw/AP1GczM6eIJTL6wFXq6tzklV3JUDc3imaKuIhSMUXK6LSTZTnmrQ3UXPlgfikbieHv6vbbas9wZuv3rH4vR618W4iU1dUeHDF0HxzQRSducQG9SwZaDNMD_qxh0eUgWzJ9KGDUuRfP0k6YMd8DWWatzr62AMIQ=w598-h398-s-no-gm?authuser=0",
-    ripley: "https://lh3.googleusercontent.com/pw/AP1GczNjaRBxbxESWAtsxccselcVaFS3-ci47I9JMCKQkywS2BzBeJkk_ZnlusMZL3__orc2T1dkYgLD0T-EcWiNWeQgDkH3LwUBOoP4UjkX8GEipkGWySnzLluxEYimQICqiV9viVkq_38c-TWs_7hbkPyDRg=w675-h1000-s-no-gm?authuser=0",
+    nostromo: "https://lh3.googleusercontent.com/pw/AP1GczNVUtTJiVgOYjSYBKBvig2KWJPzXG-FSGD5yZIoWRytw2mt6FBB2UNm_Wu5PvfUE1HMMqw_axVhqQaDTl9XrpUfY5SkJ-ivjO8GSJWiyxm_gt2LkZ2m7CuUkLCQPgMuSViQ5g3iid6MwNFQ-FfVO-XpKw=w300-h175-s-no-gm?authuser=0",
+    dallas: "https://lh3.googleusercontent.com/pw/AP1GczMp29_9o72WhrLcy2blXfBRluPZ3RBRXk2PcNB23BRqbxfZx-6uAP44ij7OCwNNbsdhDSSCbGBIbphKY_0kEQ7QvHlE_cTtYPHI9D_mmPBShNKS7nVRRcSmF8lrunWQqZDlfBkZ7vKMSZE1b6ViOGW2GA=w300-h199-s-no-gm?authuser=0",
+    ripley: "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0",
     kane: "https://lh3.googleusercontent.com/pw/AP1GczOFzgIfHHNxYS6FwmmJVPmmdcxZDtIkPRjCQv9pVz0n7jXuSdMHKncF4vILK5MKeItg9JbDWL2QGuRMbhCqXgnUMmFwC-zvTrM2SkRT_vgwX8XHdTpXjjyd36R0s804eo1V8SeWvZukoyENU3Zlv-VdVg=w200-h279-s-no-gm?authuser=0",
 };
