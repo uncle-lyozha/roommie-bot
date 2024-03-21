@@ -17,6 +17,7 @@ export type MessageType = {
     text: string;
     markup?: any;
     task?: TaskType;
+    imgUrl?: string;
 };
 
 export type UserType = {
@@ -27,7 +28,7 @@ export type UserType = {
         tgId: number;
     };
     rating: number;
-}
+};
 
 export type CalendarEventType = {
     start: {
@@ -35,8 +36,12 @@ export type CalendarEventType = {
     };
     summary: string;
     description?: string;
-}
+};
 
 export type CalendarType = {
     items: CalendarEventType[];
-}
+};
+
+export type ImageRepType = {
+    [key: string]: string;
+};

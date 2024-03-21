@@ -11,6 +11,9 @@ export class MailmanService implements IMailman {
     }
 
     async sendToTG(message: MessageType): Promise<void> {
+        if (message.imgUrl) {
+            await this.bot.telegram.sendPhoto(message.ID, message.imgUrl);
+        }
         await this.bot.telegram.sendMessage(
             message.ID,
             message.text,

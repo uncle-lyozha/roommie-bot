@@ -3,6 +3,7 @@ import { IDBService } from "../db/db.interface";
 import { MessageType, TaskType } from "../utils/types";
 import { IComposer } from "./composer.interface";
 import { tgUserReplyOption } from "../utils/constants";
+import { msgImage } from "../utils/images";
 
 export class ComposerService implements IComposer {
     private db: IDBService;
@@ -29,6 +30,7 @@ export class ComposerService implements IComposer {
         message.text =
             text +
             "\n**Attention Assigned Crew:** A briefing will be delivered to your personal terminals shortly by supervising officers. Please be ready to receive the information.";
+        message.imgUrl = msgImage.nostromo;
         return message;
     }
 
@@ -45,6 +47,7 @@ export class ComposerService implements IComposer {
         } else {
             message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \nCpt Dallas: Captain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}.`;
         }
+        message.imgUrl = msgImage.dallas;
         message.markup = Markup.inlineKeyboard([
             [
                 Markup.button.callback(
@@ -97,6 +100,7 @@ export class ComposerService implements IComposer {
                 ],
             ] as any);
         }
+        message.imgUrl = msgImage.ripley;
         return message;
     }
 
@@ -113,6 +117,7 @@ export class ComposerService implements IComposer {
         } else {
             message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} shift... \nKane: Executive officer Kane online, I see you still haven't complete your watch in ${task.area} compartment. Please hurry up, the beer is waiting.`;
         }
+        message.imgUrl = msgImage.kane;
         message.markup = Markup.inlineKeyboard([
             [
                 Markup.button.callback(
