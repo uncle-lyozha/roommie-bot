@@ -23,14 +23,15 @@ export class ComposerService implements IComposer {
         };
         const tasks = await this.db.fetchNewTasks();
         let text: string =
-            "<b>USCSS Nostromo alarm and notification system.</b> \nFollowing is this week's watch duty assignments:\n";
+            "**USCSS Nostromo alarm and notification system.** \nFollowing is this week's watch duty assignments:\n";
         for (const task of tasks) {
             text += `${task.userName} is assigned to ${task.area} compartment. \n`;
         }
-        message.text =
+        const messageText =
             text +
-            "\n<b>Attention Assigned Crew:</b> A briefing will be delivered to your personal terminals shortly by supervising officers. Please be ready to receive the information.";
+            "Attention Assigned Crew: A briefing will be delivered to your personal terminals shortly by supervising officers. Please be ready to receive the information.";
         message.imgUrl = msgImage.nostromo;
+        message.imgCap = { caption: messageText };
         return message;
     }
 
@@ -42,17 +43,24 @@ export class ComposerService implements IComposer {
             markup: [],
             task: task,
         };
+        let text;
         if (task.area === "Galley") {
-            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \n<b>Cpt Dallas:</b> \nCaptain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}. It's a tough shift, you have to continiously perform your duties until Sunday.`;
+            text = `Cpt Dallas: \nCaptain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}. It's a tough shift, you have to continiously perform your duties until Sunday.`;
         } else {
-            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \n<b>Cpt Dallas:</b> \nCaptain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}.`;
+            text = `Cpt Dallas: \nCaptain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}.`;
         }
+        message.imgCap = { caption: text };
         message.imgUrl = msgImage.dallas;
+        let data = {
+            taskId: task._id,
+            replyOption: tgUserReplyOption.confirm,
+        }
+        const callbackData = JSON.stringify(data);
         message.markup = Markup.inlineKeyboard([
             [
                 Markup.button.callback(
                     "Receive the assignment.",
-                    tgUserReplyOption.confirm
+                    callbackData
                 ),
             ],
         ] as any);
@@ -68,34 +76,34 @@ export class ComposerService implements IComposer {
             task: task,
         };
         if (task.area === "Galley") {
-            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \n<b>Ripley:</b> \nThis is Warrant officer Ellen Ripley here, how is your shift in the ${task.area}? We all know it's tough in there. Let me know if you need a hand.`;
+            message.text = `Ripley: \nThis is Warrant officer Ellen Ripley here, how is your shift in the ${task.area}? We all know it's tough in there. Let me know if you need a hand.`;
             message.markup = Markup.inlineKeyboard([
                 [
                     Markup.button.callback(
                         "It's fine, I got this.",
-                        tgUserReplyOption.snooze
+                        tgUserReplyOption.snooze + " " + task._id
                     ),
                 ],
                 [
                     Markup.button.callback(
                         "Actually, I might use some help in here.",
-                        tgUserReplyOption.help
+                        tgUserReplyOption.help  + " " + task._id
                     ),
                 ],
             ] as any);
         } else {
-            message.text = `${task._id}: task ID, USCSS Nostromo log. \nSubject: ${task.area} compartment shift... \n<b>Ripley:</b> This is Warrant officer Ellen Ripley here, how is it going in the ${task.area}? How's the progress?`;
+            message.text = `Ripley: This is Warrant officer Ellen Ripley here, how is it going in the ${task.area}? How's the progress?`;
             message.markup = Markup.inlineKeyboard([
                 [
                     Markup.button.callback(
                         "Report to the captain: all done!",
-                        tgUserReplyOption.done
+                        tgUserReplyOption.done + " " + task._id
                     ),
                 ],
                 [
                     Markup.button.callback(
                         "Still in progress, need more time.",
-                        tgUserReplyOption.snooze
+                        tgUserReplyOption.snooze + " " + task._id
                     ),
                 ],
             ] as any);
@@ -122,10 +130,53 @@ export class ComposerService implements IComposer {
             [
                 Markup.button.callback(
                     "File the complition report.",
-                    tgUserReplyOption.done
+                    tgUserReplyOption.done + " " + task._id
                 ),
             ],
         ] as any);
         return message;
+    }
+
+    async composeTGDallasPM (task: TaskType) {
+        let message: MessageType = {
+            ID: task.TGId,
+            imgUrl: msgImage.dallas,
+            imgCap: {caption: `Cpt Dallas:\n Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${task.description}`}
+        };
+        return message;
+    }
+    async composeTGRipleyPM (task: TaskType) {
+        let message: MessageType = {
+            ID: task.TGId,
+            imgUrl: msgImage.ripley,
+            imgCap: {caption: "Ripley:\n Ok, hang on. I'll check up on you later."}
+        };
+        return message;
+    }
+    async composeTGRipleyHelpPM (task: TaskType) {
+        let message: MessageType = {
+            ID: task.TGId,
+            imgUrl: msgImage.ripley,
+            imgCap: {caption: "Ripley:\n Understood. I'll give a call to the crew and send somebody in."}
+        };
+        return message;
+    }
+    async composeTGKanePM (task: TaskType) {
+        let message: MessageType = {
+            ID: task.TGId,
+            imgUrl: msgImage.kane,
+            imgCap: {caption: "Kane:\n Great! Now we're ready to investigate that distress signal the Mother woke up us for."}
+        };
+        return message;
+    }
+    
+    composeTGChatHelp (){
+        let message: MessageType = {
+            ID: Number(process.env.OUR_CHAT),
+            imgUrl: msgImage.nostromo,
+            imgCap: {caption: "Kane:\n Great! Now we're ready to investigate that distress signal the Mother woke up us for."}
+        };
+        return message;
+
     }
 }

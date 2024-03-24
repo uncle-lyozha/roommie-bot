@@ -14,10 +14,13 @@ export type TaskType = {
 
 export type MessageType = {
     ID: number;
-    text: string;
+    text?: string;
     markup?: any;
     task?: TaskType;
     imgUrl?: string;
+    imgCap?: {
+        caption: string
+    }
 };
 
 export type UserType = {
