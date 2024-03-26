@@ -5,7 +5,7 @@ import { Markup } from "telegraf";
 import { IMessageService } from "./message.interface";
 // import script from "../utils/dialogues.json"
 
-export class MessageService implements IMessageService{
+export class MessageService implements IMessageService {
     constructor() {}
 
     talkNostromo(option: nostromoChatOpt, tasks?: TaskType[]): MessageType {
@@ -13,8 +13,8 @@ export class MessageService implements IMessageService{
             console.error("Chat ID is not provided.");
         }
         let message: MessageType = {
-            ID: Number(process.env.TEST_ID),
-            // ID: Number(process.env.CHAT_ID),
+            // ID: Number(process.env.TEST_ID),
+            ID: Number(process.env.CHAT_ID),
             imgUrl: msgImage.nostromo,
         };
         let text = "**USCSS Nostromo alarm and notification system.**\n";
@@ -44,8 +44,8 @@ export class MessageService implements IMessageService{
     }
     talkDallas(task: TaskType): MessageType {
         let message: MessageType = {
-            ID: Number(process.env.TEST_ID),
-            // ID: task.TGId,
+            // ID: Number(process.env.TEST_ID),
+            ID: task.TGId,
             text: "Your options:",
             imgUrl: msgImage.dallas,
         };
@@ -66,20 +66,17 @@ export class MessageService implements IMessageService{
         return message;
     }
     replyDallas(task: TaskType): MessageType {
-        let message: MessageType = {
-            ID: Number(process.env.TEST_ID),
-            // ID: task.TGId,
-            imgUrl: msgImage.dallas,
-        };
-        message.imgCap = {
-            caption: `Cpt Dallas:\n Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${task.description}`,
+        const message: MessageType = {
+            // ID: Number(process.env.TEST_ID),
+            text: `Cpt Dallas:\n Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${task.description}`,
+            ID: task.TGId,
         };
         return message;
     }
     talkRipley(task: TaskType): MessageType {
         let message: MessageType = {
-            ID: Number(process.env.TEST_ID),
-            // ID: task.TGId,
+            // ID: Number(process.env.TEST_ID),
+            ID: task.TGId,
             text: "Your options:",
             imgUrl: msgImage.ripley,
         };
@@ -112,26 +109,21 @@ export class MessageService implements IMessageService{
     }
     replyRipley(task: TaskType, option?: tgUserReplyOption): MessageType {
         let message: MessageType = {
-            ID: Number(process.env.TEST_ID),
-            // ID: task.TGId,
-            imgUrl: msgImage.ripley,
+            // ID: Number(process.env.TEST_ID),
+            ID: task.TGId,
         };
         if (option === tgUserReplyOption.help) {
-            message.imgCap = {
-                caption:
-                    "Ripley:\n Understood. I'll give a call to the crew and send somebody in.",
-            };
+            message.text =
+                "Ripley:\n Understood. I'll give a call to the crew and send somebody in.";
         } else {
-            message.imgCap = {
-                caption: "Ripley:\n Ok, hang on. I'll check up on you later.",
-            };
+            message.text = "Ripley:\n Ok, hang on. I'll check up on you later.";
         }
         return message;
     }
     talkKane(task: TaskType): MessageType {
         let message: MessageType = {
-            ID: Number(process.env.TEST_ID),
-            // ID: task.TGId,
+            // ID: Number(process.env.TEST_ID),
+            ID: task.TGId,
             text: "Your options:",
             imgUrl: msgImage.kane,
         };
@@ -151,13 +143,9 @@ export class MessageService implements IMessageService{
     }
     replyKane(task: TaskType): MessageType {
         let message: MessageType = {
-            ID: Number(process.env.TEST_ID),
-            // ID: task.TGId,
-            imgUrl: msgImage.kane,
-        };
-        message.imgCap = {
-            caption:
-                "Kane:\n Great! Now we're ready to investigate that distress signal the Mother woke up us for.",
+            // ID: Number(process.env.TEST_ID),
+            ID: task.TGId,
+            text: "Kane:\n Great! Now we're ready to investigate that distress signal the Mother woke up us for.",
         };
         return message;
     }
@@ -216,7 +204,6 @@ export class MessageService implements IMessageService{
             }
         }
         markup = Markup.inlineKeyboard(buttons);
-        // markup = Markup.inlineKeyboard(buttons as any);
         return markup;
     }
 }

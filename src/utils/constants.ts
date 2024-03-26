@@ -10,7 +10,7 @@ export enum tgUserReplyOption {
     confirm = "confirm",
     done = "done",
     snooze = "snooze",
-    snoozeGalley = "snooze",
+    snoozeGalley = "snoozeG",
     help = "help",
 }
 

@@ -3,7 +3,6 @@ import { IScheduler } from "./scheduler.interface";
 import { IMailman } from "../mailman/mailman.interface";
 import { DBService } from "../db/db.service";
 import { CalendarService } from "../calendar/calendar.service";
-import { ComposerService } from "../composer/composer.service";
 import { MailmanService } from "../mailman/mailman.service";
 import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
@@ -18,7 +17,6 @@ export class SchedulerService implements IScheduler {
     private readonly bot: Telegraf<Context<Update>>;
     private readonly calendar = new CalendarService();
     private readonly DB = new DBService(this.calendar);
-    // private readonly composer = new ComposerService(this.DB);
     private readonly composer = new MessageService();
     private readonly mailman: IMailman;
 
@@ -95,7 +93,7 @@ export class SchedulerService implements IScheduler {
                     await this.mailman.sendToTg(message);
                     await this.DB.setDoneTaskStatus(taskId);
                     await ctx.telegram.sendPoll(
-                        process.env.OUR_CHAT as string,
+                        process.env.CHAT_ID as string,
                         `How do you assess ${userName}'s watch duty in the ${task.area}`,
                         ["🦍", "🍄", "💩"]
                     );
@@ -115,67 +113,73 @@ export class SchedulerService implements IScheduler {
             }
         });
     }
-    testListener() {
-        this.bot.on(callbackQuery("data"), async ctx => {
-            const data = ctx.callbackQuery.data;
-            const callbackData = JSON.parse(data);
-            const taskId = callbackData.taskId;
-            const option = callbackData.replyOption;
-            let message;
-            const task = await this.DB.fetchTaskById(taskId);
-            const userName = task.userName;
-            switch (option) {
-                case tgUserReplyOption.confirm:
-                    console.log(`${userName} recieved his task.`);
-                    message = this.composer.replyDallas(task);
-                    await this.mailman.sendToTg(message);
-                    break;
-                case tgUserReplyOption.snooze:
-                    console.log(`${userName} snoozed his task.`);
-                    message = this.composer.replyRipley(task);
-                    await this.mailman.sendToTg(message);
-                    break;
-                case tgUserReplyOption.done:
-                    console.log(`${userName} has done his job.`);
-                    message = this.composer.replyKane(task);
-                    await this.mailman.sendToTg(message);
-                    await ctx.telegram.sendPoll(
-                        process.env.OUR_CHAT as string,
-                        `How do you assess ${userName}'s watch duty in the ${task.area}`,
-                        ["🦍", "🍄", "💩"]
-                    );
-                    break;
-                case tgUserReplyOption.help:
-                    console.log(`${userName} called for a help in the Galley.`);
-                    message = this.composer.replyRipley(
-                        task,
-                        tgUserReplyOption.help
-                    );
-                    await this.mailman.sendToTg(message);
-                    message = this.composer.talkNostromo(
-                        nostromoChatOpt.helpGalley
-                    );
-                    await this.mailman.sendToTg(message);
-                    break;
-            }
-        });
-    }
+    // testListener() {
+    //     this.bot.on(callbackQuery("data"), async ctx => {
+    //         const data = ctx.callbackQuery.data;
+    //         let targetMsg
+    //         const msgId = ctx.callbackQuery.message?.message_id;
+    //         // if (msgId) {
+    //         //     targetMsg = msgId - 1;
+    //         // }
+    //         const callbackData = JSON.parse(data);
+    //         const taskId = callbackData.taskId;
+    //         const option = callbackData.replyOption;
+    //         let message;
+    //         const task = await this.DB.fetchTaskById(taskId);
+    //         const userName = task.userName;
+    //         switch (option) {
+    //             case tgUserReplyOption.confirm:
+    //                 console.log(`${userName} recieved his task.`);
+    //                 await ctx.deleteMessage(msgId);
+    //                 message = this.composer.replyDallas(task);
+    //                 await this.mailman.sendToTg(message);
+    //                 break;
+    //             case tgUserReplyOption.snooze:
+    //                 console.log(`${userName} snoozed his task.`);
+    //                 message = this.composer.replyRipley(task);
+    //                 await this.mailman.sendToTg(message);
+    //                 break;
+    //             case tgUserReplyOption.done:
+    //                 console.log(`${userName} has done his job.`);
+    //                 message = this.composer.replyKane(task);
+    //                 await this.mailman.sendToTg(message);
+    //                 await ctx.telegram.sendPoll(
+    //                     process.env.OUR_CHAT as string,
+    //                     `How do you assess ${userName}'s watch duty in the ${task.area}`,
+    //                     ["🦍", "🍄", "💩"]
+    //                 );
+    //                 break;
+    //             case tgUserReplyOption.help:
+    //                 console.log(`${userName} called for a help in the Galley.`);
+    //                 message = this.composer.replyRipley(
+    //                     task,
+    //                     tgUserReplyOption.help
+    //                 );
+    //                 await this.mailman.sendToTg(message);
+    //                 message = this.composer.talkNostromo(
+    //                     nostromoChatOpt.helpGalley
+    //                 );
+    //                 await this.mailman.sendToTg(message);
+    //                 break;
+    //         }
+    //     });
+    // }
 
-    async testCheck() {
-        console.log("For whom the test bell tolls.");
-        const newTasks = await this.DB.fetchNewTasks();
-        const chatMessage = this.composer.talkNostromo(
-            nostromoChatOpt.schedule,
-            newTasks
-        );
-        await this.mailman.sendToTg(chatMessage);
-        for (const task of newTasks) {
-            const dallasMessage = this.composer.talkDallas(task);
-            await this.mailman.sendToTg(dallasMessage);
-            const ripleyMessage = this.composer.talkDallas(task);
-            await this.mailman.sendToTg(ripleyMessage);
-            const kaneMessage = this.composer.talkDallas(task);
-            await this.mailman.sendToTg(kaneMessage);
-        }
-    }
+    // async testCheck() {
+    //     console.log("For whom the test bell tolls.");
+    //     const newTasks = await this.DB.fetchNewTasks();
+    //     const chatMessage = this.composer.talkNostromo(
+    //         nostromoChatOpt.schedule,
+    //         newTasks
+    //     );
+    //     await this.mailman.sendToTg(chatMessage);
+    //     for (const task of newTasks) {
+    //         const dallasMessage = this.composer.talkDallas(task);
+    //         await this.mailman.sendToTg(dallasMessage);
+            // const ripleyMessage = this.composer.talkRipley(task);
+            // await this.mailman.sendToTg(ripleyMessage);
+            // const kaneMessage = this.composer.talkKane(task);
+            // await this.mailman.sendToTg(kaneMessage);
+    //     }
+    // }
 }

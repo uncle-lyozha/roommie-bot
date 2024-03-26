@@ -10,14 +10,21 @@ export class MailmanService implements IMailman {
         this.bot = bot;
     }
 
-    async sendToTg(message: MessageType): Promise<void> {
+    async sendToTg(message: MessageType, msgId?: number): Promise<void> {
+        if (msgId && message.text) {
+            await this.bot.telegram.editMessageText(
+                message.ID,
+                msgId,
+                "sdfg",
+                message.text
+            );
+        }
         if (message.imgUrl) {
             await this.bot.telegram.sendPhoto(
                 message.ID,
                 message.imgUrl,
                 message.imgCap
             );
-            return;
         }
         if (message.text) {
             await this.bot.telegram.sendMessage(
@@ -25,31 +32,6 @@ export class MailmanService implements IMailman {
                 message.text,
                 message.markup
             );
-            return;
-        }
-    }
-
-    async sendKeyboardToTG(message: MessageType): Promise<void> {
-        if (message.text) {
-            await this.bot.telegram.sendMessage(
-                message.ID,
-                message.text,
-                message.markup
-            );
-        } else {
-            console.error("message.text is absent.");
-        }
-    }
-
-    async sendPictureToTG(message: MessageType): Promise<void> {
-        if (message.imgUrl) {
-            await this.bot.telegram.sendPhoto(
-                message.ID,
-                message.imgUrl,
-                message.imgCap
-            );
-        } else {
-            console.error("Mailman has no picture to send.");
         }
     }
 }
