@@ -1,4 +1,4 @@
-import { taskStatus } from "./constants";
+import { taskStatus, tgUserReplyOption } from "./constants";
 import { ObjectId } from "mongoose";
 
 export type TaskType = {
@@ -48,3 +48,12 @@ export type CalendarType = {
 export type ImageRepType = {
     [key: string]: string;
 };
+
+export type SceneOptionType = {
+    [key: string]: string;
+}
+
+export type MarkupCBData = {
+    taskId: ObjectId;
+    replyOption: tgUserReplyOption
+}

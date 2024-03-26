@@ -5,8 +5,8 @@ import mongoose from "mongoose";
 import { SchedulerService } from "./scheduler/scheduler.service";
 
 export const bot: Telegraf<Context<Update>> = new Telegraf(
-    process.env.BOT_TOKEN as string
-    // process.env.TEST_BOT as string
+    // process.env.BOT_TOKEN as string
+    process.env.TEST_BOT as string
 );
 
 const Scheduler = new SchedulerService(bot);
@@ -24,9 +24,10 @@ const bootstrap = async () => {
 
 bootstrap();
 
-Scheduler.listener();
-Scheduler.monday();
-Scheduler.repeating();
-Scheduler.sunday();
+// Scheduler.listener();
+// Scheduler.monday();
+// Scheduler.repeating();
+// Scheduler.sunday();
 
-// Scheduler.testCheck();
+Scheduler.testListener();
+Scheduler.testCheck();

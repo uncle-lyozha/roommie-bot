@@ -1,0 +1,45 @@
+{
+    "nostromo": {
+        "picture": "https://lh3.googleusercontent.com/pw/AP1GczNVUtTJiVgOYjSYBKBvig2KWJPzXG-FSGD5yZIoWRytw2mt6FBB2UNm_Wu5PvfUE1HMMqw_axVhqQaDTl9XrpUfY5SkJ-ivjO8GSJWiyxm_gt2LkZ2m7CuUkLCQPgMuSViQ5g3iid6MwNFQ-FfVO-XpKw=w300-h175-s-no-gm?authuser=0",
+        "message": [
+            "**USCSS Nostromo alarm and notification system.** \nFollowing is this week's watch duty assignments:\n",
+            "Attention Assigned Crew: A briefing will be delivered to your personal terminals shortly by supervising officers. Please be ready to receive the information.",
+            "**USCSS Nostromo alarm and notification system.** \n Attention Crew: Whatchman in the Galley requested for an assistance. Please be responsive to your crewmate."
+        ]
+    },
+
+    "dallas": {
+        "picture": "https://lh3.googleusercontent.com/pw/AP1GczMp29_9o72WhrLcy2blXfBRluPZ3RBRXk2PcNB23BRqbxfZx-6uAP44ij7OCwNNbsdhDSSCbGBIbphKY_0kEQ7QvHlE_cTtYPHI9D_mmPBShNKS7nVRRcSmF8lrunWQqZDlfBkZ7vKMSZE1b6ViOGW2GA=w300-h199-s-no-gm?authuser=0",
+        "message": [
+            "Cpt Dallas: \nCaptain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}. It's a tough shift, you have to continiously perform your duties until Sunday.",
+            "Cpt Dallas: \nCaptain Dallas speaking, according to the ship's schedule you were assigned to watch duty in the ${task.area}."
+        ],
+        "reply": [
+            "Cpt Dallas:\n Good. Officer Ripley will check up on you on Thursday. \nYour objectives are: \n${task.description}"
+        ],
+        "buttons": ["Receive the assignment"]
+    },
+
+    "ripley": {
+        "picture": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0",
+        "message": [
+            "Ripley: \nThis is Warrant officer Ellen Ripley here, how is your shift in the ${task.area}? We all know it's tough in there. Let me know if you need a hand.",
+            "Ripley: This is Warrant officer Ellen Ripley here, how is it going in the ${task.area}? How's the progress?"
+        ],
+        "reply": [
+            "Ripley:\n Ok, hang on. I'll check up on you later.",
+            "Ripley:\n Understood. I'll give a call to the crew and send somebody in."
+        ],
+        "buttons": [
+            "It's fine, I got this.",
+            "Actually, I might use some help in here."
+        ]
+    },
+
+    "cane": {
+        "picture": "https://lh3.googleusercontent.com/pw/AP1GczOFzgIfHHNxYS6FwmmJVPmmdcxZDtIkPRjCQv9pVz0n7jXuSdMHKncF4vILK5MKeItg9JbDWL2QGuRMbhCqXgnUMmFwC-zvTrM2SkRT_vgwX8XHdTpXjjyd36R0s804eo1V8SeWvZukoyENU3Zlv-VdVg=w200-h279-s-no-gm?authuser=0",
+        "message": [
+            
+        ]
+    }
+}

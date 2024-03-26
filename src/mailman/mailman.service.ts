@@ -10,6 +10,25 @@ export class MailmanService implements IMailman {
         this.bot = bot;
     }
 
+    async sendToTg(message: MessageType): Promise<void> {
+        if (message.imgUrl) {
+            await this.bot.telegram.sendPhoto(
+                message.ID,
+                message.imgUrl,
+                message.imgCap
+            );
+            return;
+        }
+        if (message.text) {
+            await this.bot.telegram.sendMessage(
+                message.ID,
+                message.text,
+                message.markup
+            );
+            return;
+        }
+    }
+
     async sendKeyboardToTG(message: MessageType): Promise<void> {
         if (message.text) {
             await this.bot.telegram.sendMessage(
