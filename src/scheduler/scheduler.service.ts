@@ -87,6 +87,12 @@ export class SchedulerService implements IScheduler {
                     await this.mailman.sendToTg(message);
                     await this.DB.setSnoozedTaskStatus(taskId);
                     break;
+                case tgUserReplyOption.snoozeGalley:
+                    console.log(`${userName} snoozed his task in Galley.`);
+                    message = this.composer.replyRipley(task);
+                    await this.mailman.sendToTg(message);
+                    await this.DB.setSnoozedTaskStatus(taskId);
+                    break;
                 case tgUserReplyOption.done:
                     console.log(`${userName} has done his job.`);
                     message = this.composer.replyKane(task);
