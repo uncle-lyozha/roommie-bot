@@ -68,6 +68,7 @@ export class SchedulerService implements IScheduler {
     listener() {
         this.bot.on(callbackQuery("data"), async ctx => {
             const data = ctx.callbackQuery.data;
+            const msgId = ctx.callbackQuery.message?.message_id;
             const callbackData = JSON.parse(data);
             const taskId = callbackData.taskId;
             const option = callbackData.replyOption;
@@ -78,25 +79,25 @@ export class SchedulerService implements IScheduler {
                 case tgUserReplyOption.confirm:
                     console.log(`${userName} recieved his task.`);
                     message = this.composer.replyDallas(task);
-                    await this.mailman.sendToTg(message);
+                    await this.mailman.sendToTg(message, msgId);
                     await this.DB.setPendingTaskStatus(taskId);
                     break;
                 case tgUserReplyOption.snooze:
                     console.log(`${userName} snoozed his task.`);
                     message = this.composer.replyRipley(task);
-                    await this.mailman.sendToTg(message);
+                    await this.mailman.sendToTg(message, msgId);
                     await this.DB.setSnoozedTaskStatus(taskId);
                     break;
                 case tgUserReplyOption.snoozeGalley:
                     console.log(`${userName} snoozed his task in Galley.`);
                     message = this.composer.replyRipley(task);
-                    await this.mailman.sendToTg(message);
+                    await this.mailman.sendToTg(message, msgId);
                     await this.DB.setSnoozedTaskStatus(taskId);
                     break;
                 case tgUserReplyOption.done:
                     console.log(`${userName} has done his job.`);
                     message = this.composer.replyKane(task);
-                    await this.mailman.sendToTg(message);
+                    await this.mailman.sendToTg(message, msgId);
                     await this.DB.setDoneTaskStatus(taskId);
                     await ctx.telegram.sendPoll(
                         process.env.CHAT_ID as string,
@@ -110,11 +111,11 @@ export class SchedulerService implements IScheduler {
                         task,
                         tgUserReplyOption.help
                     );
-                    await this.mailman.sendToTg(message);
+                    await this.mailman.sendToTg(message, msgId);
                     message = this.composer.talkNostromo(
                         nostromoChatOpt.helpGalley
                     );
-                    await this.mailman.sendToTg(message);
+                    await this.mailman.sendToTg(message, msgId);
                     break;
             }
         });
@@ -182,10 +183,10 @@ export class SchedulerService implements IScheduler {
     //     for (const task of newTasks) {
     //         const dallasMessage = this.composer.talkDallas(task);
     //         await this.mailman.sendToTg(dallasMessage);
-            // const ripleyMessage = this.composer.talkRipley(task);
-            // await this.mailman.sendToTg(ripleyMessage);
-            // const kaneMessage = this.composer.talkKane(task);
-            // await this.mailman.sendToTg(kaneMessage);
+    // const ripleyMessage = this.composer.talkRipley(task);
+    // await this.mailman.sendToTg(ripleyMessage);
+    // const kaneMessage = this.composer.talkKane(task);
+    // await this.mailman.sendToTg(kaneMessage);
     //     }
     // }
 }
